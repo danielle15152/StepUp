@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvSettingsTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textColor="@android:color/white"
+            android:textSize="52sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Section: Goal Times -->
+        <TextView
+            android:id="@+id/tvGoalTimes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Goal Times"
+            android:textColor="@android:color/white"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:layout_marginTop="26dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSettingsTitle" />
+
+        <!-- Row 1 -->
+        <TextView
+            android:id="@+id/tvReading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Reading"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvReadingTime"
+            app:layout_constraintTop_toBottomOf="@id/tvGoalTimes"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:id="@+id/tvReadingTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1:00 PM"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvReading" />
+
+        <View
+            android:id="@+id/div1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#3A5C79"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvReading" />
+
+        <!-- Row 2 -->
+        <TextView
+            android:id="@+id/tvExercising"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Exercising"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            android:layout_marginTop="22dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvExercisingTime"
+            app:layout_constraintTop_toBottomOf="@id/div1" />
+
+        <TextView
+            android:id="@+id/tvExercisingTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="6:00 PM"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvExercising" />
+
+        <View
+            android:id="@+id/div2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#3A5C79"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvExercising" />
+
+        <!-- Row 3 -->
+        <TextView
+            android:id="@+id/tvAnotherGoal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Another Goal"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            android:layout_marginTop="22dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvAnotherGoalTime"
+            app:layout_constraintTop_toBottomOf="@id/div2" />
+
+        <TextView
+            android:id="@+id/tvAnotherGoalTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="8:00 AM"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/tvAnotherGoal" />
+
+        <!-- Section: Motivation Style -->
+        <TextView
+            android:id="@+id/tvMotivation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Motivation Style"
+            android:textColor="@android:color/white"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:layout_marginTop="34dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvAnotherGoal" />
+
+        <RadioGroup
+            android:id="@+id/rgMotivation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvMotivation">
+
+            <RadioButton
+                android:id="@+id/rbEncouraging"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Encouraging"
+                android:textColor="@android:color/white"
+                android:textSize="30sp"
+                android:buttonTint="#3A78D2"
+                android:checked="true"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
+
+            <RadioButton
+                android:id="@+id/rbTough"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tough"
+                android:textColor="@android:color/white"
+                android:textSize="30sp"
+                android:buttonTint="#3A78D2"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
+        </RadioGroup>
+
+        <!-- Section: Location -->
+        <TextView
+            android:id="@+id/tvLocationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Location"
+            android:textColor="@android:color/white"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:layout_marginTop="28dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rgMotivation" />
+
+        <EditText
+            android:id="@+id/etLocation"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="14dp"
+            android:hint="Home"
+            android:textColor="@android:color/white"
+            android:textColorHint="#B9C7D9"
+            android:textSize="26sp"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvLocationTitle" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

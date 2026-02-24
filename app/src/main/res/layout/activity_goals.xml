@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:id="@+id/root"
+
+        android:alpha="1"
+
+        android:background="@drawable/bg_gradient"
+        android:padding="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:id="@+id/imgLogo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_runner"
+           />
+
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Step Up"
+            android:textColor="@android:color/white"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/imgLogo"
+            app:layout_constraintBottom_toBottomOf="@id/imgLogo"
+            android:layout_marginStart="12dp"/>
+        <ImageButton
+            android:id="@+id/btnSettings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="16dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_setting"
+            app:tint="@android:color/white"
+            android:contentDescription="Settings"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+
+    </LinearLayout>
+    <!-- 1) לוגו + Step Up -->
+
+    <FrameLayout
+        android:id="@+id/rootContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+
+        >
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvGoals"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgLogo"
+        />
+
+        <FrameLayout
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:background="@color/white"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+    <!-- 5) כפתורים -->
+    <Button
+        android:id="@+id/btnNewGoal"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:text="New Goal"
+        android:textAllCaps="false"
+        android:textSize="22sp"
+
+        android:textColor="@android:color/white"
+        android:backgroundTint="#3A78D2"
+        android:layout_marginTop="34dp"
+       />
+
+    <Button
+        android:id="@+id/btnHistory"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:text="View History"
+        android:textAllCaps="false"
+        android:textSize="22sp"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#2E5FA7"
+        android:layout_marginTop="14dp"
+     />
+
+
+</LinearLayout>
