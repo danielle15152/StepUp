@@ -20,7 +20,7 @@ public class EditGoalFragment extends Fragment {
 
     private static final String ARG_GOAL_ID = "goal_id";
 
-    public static EditGoalFragment newInstance(long goalId) {
+    public static EditGoalFragment newInstance(long goalId) {//שמירת הid של היעד שאותו עורכים
         EditGoalFragment f = new EditGoalFragment();
         Bundle b = new Bundle();
         b.putLong(ARG_GOAL_ID, goalId);
@@ -35,7 +35,7 @@ public class EditGoalFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
+    public View onCreateView(@NonNull LayoutInflater inflater,//חיבור הקוד לקובץ העיצוב
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_edit_goal, container, false);
@@ -59,16 +59,16 @@ public class EditGoalFragment extends Fragment {
 
         loadGoal();
 
-        btnCancel.setOnClickListener(v ->
-                requireActivity().getSupportFragmentManager().popBackStack()
+        btnCancel.setOnClickListener(v ->//כפתור הביטול
+                requireActivity().getSupportFragmentManager().popBackStack()//סוגר את הפרגמנט ומחזיר אותנו לרשימה בלי לשנות כלום
         );
 
-        btnSave.setOnClickListener(v ->
+        btnSave.setOnClickListener(v ->//שמירת השינויים
                 saveGoal()
         );
     }
 
-    private void loadGoal() {
+    private void loadGoal() {//טעינת הנתונים הקודמים כדי שהמשתמש יראה לפני שהוא משנה
         Executors.newSingleThreadExecutor().execute(() -> {
             Goal g = dao.getGoalById(goalId);
             requireActivity().runOnUiThread(() -> {

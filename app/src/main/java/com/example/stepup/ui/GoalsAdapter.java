@@ -25,55 +25,55 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
     private final List<GoalWithReminder> items = new ArrayList<>();
     private final GoalActionsListener listener;
 
-    public GoalsAdapter(GoalActionsListener listener) {
+    public GoalsAdapter(GoalActionsListener listener) {//מעבירים מאזין לאדפטק שידע למי לדווח כאשר קיימת לחיצה
         this.listener = listener;
     }
 
-    public void setItems(List<GoalWithReminder> newItems) {
-        items.clear();
-        if (newItems != null) items.addAll(newItems);
-        notifyDataSetChanged();
+    public void setItems(List<GoalWithReminder> newItems) {//פעולה שמעדכנת את הרשימה ומורה למסך לצייר אותו מחדש
+        items.clear();//לנקות את הישן
+        if (newItems != null) items.addAll(newItems);//הוספת נתונים חדשים
+        notifyDataSetChanged();//לרענן! המסך השתנה!
     }
 
     @NonNull
     @Override
-    public GoalsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_goal, parent, false);
-        return new GoalsViewHolder(v);
+    public GoalsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {//יצירה של פריט נוסף ברשימה
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_goal, parent, false);// לוקחים את עיצוב הפריט מהxml של שאר הפריטים הרשימה כדי לעצב אותו אותו הדבר
+        return new GoalsViewHolder(v);//אובייקט שניתן לעבוד איתו
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GoalsViewHolder h, int position) {
-        GoalWithReminder gwr = items.get(position);
+    public void onBindViewHolder(@NonNull GoalsViewHolder h, int position) {//מילוי נתונים באובייקט החדש שברשימה
+        GoalWithReminder gwr = items.get(position);// שליפת הנתון מהיעד הנוכחי
 
-        h.tvGoalName.setText(safe(gwr.goal.name));
-        h.tvDescription.setText(safe(gwr.goal.description));
+        h.tvGoalName.setText(safe(gwr.goal.name));//לוקחת מהאדפטר את הפרטים למלא
+        h.tvDescription.setText(safe(gwr.goal.description));//סייפ זו פעולה ששומרת שלא יקרוס אם יש טקסט ריק
         h.tvCategory.setText(safe(gwr.goal.category));
 
         if (gwr.goal.active) {
-            h.tvActive.setText("ACTIVE");
+            h.tvActive.setText("ACTIVE");//אם המטרה פעילה
             h.tvActive.setAlpha(1f);
         } else {
-            h.tvActive.setText("PAUSED");
-            h.tvActive.setAlpha(0.6f);
+            h.tvActive.setText("PAUSED");//אם המטרה לא פעילה
+            h.tvActive.setAlpha(0.6f);//הכיתוב נעשה שקוף
         }
 
         if (gwr.reminder == null) {
-            h.tvReminder.setText("No reminder");
+            h.tvReminder.setText("No reminder");//אם אין תזכורות למטרה
             h.tvReminder.setAlpha(0.7f);
-        } else {
-            String daysStr = formatDays(gwr.reminder.days);
-            String timeStr = formatMinuteOfDay(gwr.reminder.minuteOfDay);
-            h.tvReminder.setText(daysStr + " @ " + timeStr);
+        } else {//אם יש תזכורות
+            String daysStr = formatDays(gwr.reminder.days);//פעולה שהופכת את התאריך לקריא
+            String timeStr = formatMinuteOfDay(gwr.reminder.minuteOfDay);//פעולה שהופכת אתהדקות לקריאות
+            h.tvReminder.setText(daysStr + " @ " + timeStr);//הטקסט הקריא
             h.tvReminder.setAlpha(1f);
         }
 
-        h.btnEdit.setOnClickListener(v -> {
+        h.btnEdit.setOnClickListener(v -> {//האדפטר מעדכן את המאזין שלחצו על כפתור העריכה
             if (listener != null) listener.onEditClicked(gwr);
         });
 
         h.btnDelete.setOnClickListener(v -> {
-            if (listener != null) listener.onDeleteClicked(gwr);
+            if (listener != null) listener.onDeleteClicked(gwr);//כנל לכפתור של מחיקה
         });
     }
 
@@ -82,7 +82,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         return items.size();
     }
 
-    static class GoalsViewHolder extends RecyclerView.ViewHolder {
+    static class GoalsViewHolder extends RecyclerView.ViewHolder {//מחלקה שמחזיקה את כל הview במשתנים במקום לחפש כל פעם בxml
         TextView tvGoalName, tvDescription, tvCategory, tvActive, tvReminder;
         TextView btnEdit, btnDelete;
 
@@ -100,7 +100,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
 
     private static String safe(String s) { return (s == null) ? "" : s; }
 
-    private static String formatDays(List<Integer> days) {
+    private static String formatDays(List<Integer> days) {//פעולת עזר שמחליפה בין מספר ליום
         if (days == null || days.isEmpty()) return "No days";
         String[] names = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         StringBuilder sb = new StringBuilder();
@@ -113,7 +113,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         return sb.toString();
     }
 
-    private static String formatMinuteOfDay(int minuteOfDay) {
+    private static String formatMinuteOfDay(int minuteOfDay) {//פעולת עזר לספירת הדקות
         int h = Math.max(0, minuteOfDay) / 60;
         int m = Math.max(0, minuteOfDay) % 60;
         return String.format(Locale.US, "%02d:%02d", h, m);
