@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHolder> {
+public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHolder> {//אדפטר- לוקח את הקוד ומעצב אותו ויזואלית על המסך
 
-    public interface GoalActionsListener {
+    public interface GoalActionsListener {//ממשק עם הפעולות שלוחצים על עריכה ומחיקה
         void onEditClicked(GoalWithReminder item);
         void onDeleteClicked(GoalWithReminder item);
     }
