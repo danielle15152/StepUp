@@ -20,10 +20,11 @@ public class EditGoalFragment extends Fragment {
 
     private static final String ARG_GOAL_ID = "goal_id";
 
-    public static EditGoalFragment newInstance(long goalId) {//שמירת הid של היעד שאותו עורכים
+    // שורה 23 בערך
+    public static EditGoalFragment newInstance(long goalId) {
         EditGoalFragment f = new EditGoalFragment();
         Bundle b = new Bundle();
-        b.putLong(ARG_GOAL_ID, goalId);
+        b.putLong(ARG_GOAL_ID, goalId); // אם זה -1, זה אומר "חדש"
         f.setArguments(b);
         return f;
     }
@@ -68,7 +69,11 @@ public class EditGoalFragment extends Fragment {
         );
     }
 
-    private void loadGoal() {//טעינת הנתונים הקודמים כדי שהמשתמש יראה לפני שהוא משנה
+    private void loadGoal() {
+        // לוגיקה חכמה: אם ה-ID הוא -1, זה אומר שאנחנו מוסיפים מטרה חדשה.
+        // אין מה לטעון מהמסד, פשוט נשאיר את השדות ריקים.
+        if (goalId == -1) return;
+
         Executors.newSingleThreadExecutor().execute(() -> {
             Goal g = dao.getGoalById(goalId);
             requireActivity().runOnUiThread(() -> {
@@ -86,19 +91,40 @@ public class EditGoalFragment extends Fragment {
         String desc = etDescription.getText().toString().trim();
         String cat = etCategory.getText().toString().trim();
 
+        // לוגיקה עסקית בסיסית: מניעת שמירה של שם ריק
+        if (name.isEmpty()) {
+            etName.setError("Name cannot be empty");
+            return;
+        }
+
         Executors.newSingleThreadExecutor().execute(() -> {
-            Goal g = dao.getGoalById(goalId);
-            if (g != null) {
-                g.name = name;
-                g.description = desc;
-                g.category = cat;
-                dao.updateGoal(g);
+            if (goalId == -1) {
+                // --- לוגיקת הוספה (Create) ---
+                Goal newGoal = new Goal();
+                newGoal.name = name;
+                newGoal.description = desc;
+                newGoal.category = cat;
+                newGoal.active = true; // מטרה חדשה מתחילה כפעילה
+
+                dao.insertGoal(newGoal); // וודאי שב-Dao.java יש פונקציית @Insert
+            } else {
+                // --- לוגיקת עריכה (Update) ---
+                Goal g = dao.getGoalById(goalId);
+                if (g != null) {
+                    g.name = name;
+                    g.description = desc;
+                    g.category = cat;
+                    dao.updateGoal(g);
+                }
             }
 
             requireActivity().runOnUiThread(() -> {
                 requireActivity().getSupportFragmentManager().popBackStack();
-                ((GoalsActivity) requireActivity()).loadGoals(); // רענון הרשימה
+                ((GoalsActivity) requireActivity()).loadGoals(); // רענון הרשימה במסך הראשי
             });
         });
     }
-}
+    }
+
+
+

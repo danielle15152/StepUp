@@ -81,6 +81,18 @@ getSupportFragmentManager().addOnBackStackChangedListener(()->{
         });
 
         rvGoals.setAdapter(adapter);
+        // 1. מוצאים את כפתור הפלוס מה-XML (נניח שקראת לו fabAddGoal)
+        View fabAdd = findViewById(R.id.fabAddGoal);
+        if (fabAdd != null) {
+            fabAdd.setOnClickListener(v -> {
+                // 2. פותחים את הפרגמנט עם ID של 1- כדי לסמן "מטרה חדשה"
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, EditGoalFragment.newInstance(-1))
+                        .addToBackStack("add_goal")
+                        .commit();
+            });
+        }
 
         db = Room.databaseBuilder(//יוצרים קשר עם המסד נתונים
                 getApplicationContext(),
