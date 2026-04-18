@@ -25,12 +25,19 @@
         android:hint="Description"
         android:layout_marginTop="10dp"/>
 
-    <EditText
-        android:id="@+id/etCategory"
+    <!-- כותרת קטנה מעל הבחירה -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Category:"
+        android:layout_marginTop="8dp"/>
+
+    <!-- זה הרכיב שיוצר רשימה נפתחת -->
+    <Spinner
+        android:id="@+id/spinnerCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Category"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginBottom="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

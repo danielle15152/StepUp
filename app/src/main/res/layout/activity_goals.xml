@@ -86,30 +86,7 @@
     </FrameLayout>
 
     <!-- 5) כפתורים -->
-    <Button
-        android:id="@+id/btnNewGoal"
-        android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:text="New Goal"
-        android:textAllCaps="false"
-        android:textSize="22sp"
 
-        android:textColor="@android:color/white"
-        android:backgroundTint="#3A78D2"
-        android:layout_marginTop="34dp"
-       />
-
-    <Button
-        android:id="@+id/btnHistory"
-        android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:text="View History"
-        android:textAllCaps="false"
-        android:textSize="22sp"
-        android:textColor="@android:color/white"
-        android:backgroundTint="#2E5FA7"
-        android:layout_marginTop="14dp"
-     />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddGoal"

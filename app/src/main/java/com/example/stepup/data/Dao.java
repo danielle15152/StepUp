@@ -8,7 +8,7 @@ import androidx.room.Update;
 import com.example.stepup.data.entities.Goal;
 import com.example.stepup.data.entities.GoalWithReminder;
 import com.example.stepup.data.entities.Reminder;
-
+import com.example.stepup.data.entities.Category;
 import java.util.List;
 
 @androidx.room.Dao
@@ -54,4 +54,17 @@ public abstract class Dao {
 
     @Update
     public abstract void updateGoal(Goal goal);
+
+
+    @Insert
+    public abstract long insertCategory(Category category);
+
+    @Query("SELECT * FROM categories")
+    public abstract List<Category> getAllCategories();
+
+    @Query("SELECT * FROM categories WHERE isDefault = 1")
+    public abstract List<Category> getDefaultCategories();
+
+    @Query("SELECT name FROM categories WHERE id = :catId")
+    public abstract String getCategoryNameById(long catId);
 }

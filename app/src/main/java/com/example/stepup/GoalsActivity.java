@@ -94,13 +94,26 @@ getSupportFragmentManager().addOnBackStackChangedListener(()->{
             });
         }
 
-        db = Room.databaseBuilder(//יוצרים קשר עם המסד נתונים
-                getApplicationContext(),
-                AppDb.class,
-                "stepup-db"
-        ).build();
+        db = Room.databaseBuilder(
+                        getApplicationContext(),
+                        AppDb.class,
+                        "stepup-db"
+                )
+                .fallbackToDestructiveMigration()
+                .build();
 
         dao = db.dao();//שולפים את הדאו כדי שנוכל לעבוד איתו
+
+
+        // הוספת קטגוריות בסיס אם הרשימה ריקה (רצוי להריץ בטרד נפרד)
+        Executors.newSingleThreadExecutor().execute(() -> {
+            if (dao.getAllCategories().isEmpty()) {
+                dao.insertCategory(new com.example.stepup.data.entities.Category("Health", true));
+                dao.insertCategory(new com.example.stepup.data.entities.Category("Education", true));
+                dao.insertCategory(new com.example.stepup.data.entities.Category("Sports", true));
+                dao.insertCategory(new com.example.stepup.data.entities.Category("Finance", true));
+            }
+        });
 
         loadGoals();//פונקציה שמביאה את הנתונים
     }
@@ -111,9 +124,7 @@ getSupportFragmentManager().addOnBackStackChangedListener(()->{
 
     public void loadGoals() {
         Executors.newSingleThreadExecutor().execute(() -> {//עוברים לטרד רקע כדי להביא נתונים מהמסד נתונים
-            if (dao.countGoals() == 0) {
-                SeedDataHelper.populateWith15Goals(dao);
-            }
+
             List<GoalWithReminder> items = dao.getGoalsWithReminders();
             runOnUiThread(() -> adapter.setItems(items));//חוזרים לטרד הראשי כדי לעדכן את המסך
         });

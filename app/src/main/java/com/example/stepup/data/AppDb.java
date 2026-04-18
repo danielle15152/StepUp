@@ -8,8 +8,8 @@ import com.example.stepup.data.converters.DateConverter;
 import com.example.stepup.data.converters.DaysListConverter;
 import com.example.stepup.data.entities.Goal;
 import com.example.stepup.data.entities.Reminder;
-
-@Database(entities = {Goal.class, Reminder.class}, version = 1)
+import com.example.stepup.data.entities.Category;
+@Database(entities = {Goal.class, Reminder.class, Category.class}, version = 2)
 @TypeConverters({DaysListConverter.class, DateConverter.class})
 public abstract class AppDb extends RoomDatabase {
     public abstract Dao dao();

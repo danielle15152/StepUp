@@ -47,8 +47,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         GoalWithReminder gwr = items.get(position);// שליפת הנתון מהיעד הנוכחי
 
         h.tvGoalName.setText(safe(gwr.goal.name));//לוקחת מהאדפטר את הפרטים למלא
-        h.tvDescription.setText(safe(gwr.goal.description));//סייפ זו פעולה ששומרת שלא יקרוס אם יש טקסט ריק
-        h.tvCategory.setText(safe(gwr.goal.category));
+        h.tvDescription.setText(safe(gwr.goal.description));//סייפ זו פעולה ששומרת שלא יקרוס אם יש טקסט ריקd
+        h.tvCategory.setText("Category: " + gwr.goal.categoryId);
 
         if (gwr.goal.active) {
             h.tvActive.setText("ACTIVE");//אם המטרה פעילה
