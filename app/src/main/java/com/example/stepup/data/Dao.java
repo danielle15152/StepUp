@@ -59,6 +59,15 @@ public abstract class Dao {
     @Update
     public abstract void updateGoal(Goal goal);
 
+    @Update
+    public abstract void updateReminder(Reminder reminder);
+
+    @Transaction
+    public void updateGoalWithReminder(Goal goal, Reminder reminder) {
+        updateGoal(goal);
+        updateReminder(reminder);
+    }
+
 
     @Insert
     public abstract long insertCategory(Category category);
