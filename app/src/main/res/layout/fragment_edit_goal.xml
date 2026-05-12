@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -25,21 +26,18 @@
         android:hint="Description"
         android:layout_marginTop="10dp"/>
 
-    <!-- כותרת קטנה מעל הבחירה -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Category:"
         android:layout_marginTop="8dp"/>
 
-    <!-- זה הרכיב שיוצר רשימה נפתחת -->
     <Spinner
         android:id="@+id/spinnerCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp" />
 
-    <!-- הוספנו את החלק הזה לבחירת סוג התראה -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,6 +65,51 @@
             android:layout_marginStart="16dp"/>
 
     </RadioGroup>
+
+    <!-- הוספנו את החלק לבחירת זמן ותאריך -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reminder Time"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tvTimePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select a time"
+        android:padding="12dp"
+        android:background="?attr/editTextBackground"
+        android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+        android:gravity="center_vertical"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reminder Days"
+        android:layout_marginTop="16dp"/>
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/cgDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.chip.Chip android:id="@+id/chipSun" style="@style/Widget.MaterialComponents.Chip.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sun"/>
+        <com.google.android.material.chip.Chip android:id="@+id/chipMon" style="@style/Widget.MaterialComponents.Chip.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mon"/>
+        <com.google.android.material.chip.Chip android:id="@+id/chipTue" style="@style/Widget.MaterialComponents.Chip.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tue"/>
+        <com.google.android.material.chip.Chip android:id="@+id/chipWed" style="@style/Widget.MaterialComponents.Chip.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Wed"/>
+        <com.google.android.material.chip.Chip android:id="@+id/chipThu" style="@style/Widget.MaterialComponents.Chip.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thu"/>
+        <com.google.android.material.chip.Chip android:id="@+id/chipFri" style="@style/Widget.MaterialComponents.Chip.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fri"/>
+        <com.google.android.material.chip.Chip android:id="@+id/chipSat" style="@style/Widget.MaterialComponents.Chip.Filter" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sat"/>
+
+    </com.google.android.material.chip.ChipGroup>
+
+
+    <!-- מוודאים שיש מרווח מהתוכן מעל הכפתורים -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
 
     <LinearLayout
