@@ -42,7 +42,7 @@ public abstract class Dao {
     public abstract void insertReminder(Reminder reminder);
 
     @Transaction
-    public void insertGoalWithReminder(Goal goal, Reminder reminder) {
+    public long insertGoalWithReminder(Goal goal, Reminder reminder) {
 
         // 1️⃣ Insert Goal first
         long goalId = insertGoal(goal);
@@ -52,6 +52,8 @@ public abstract class Dao {
 
         // 3️⃣ Insert Reminder
         insertReminder(reminder);
+
+        return goalId; // מחזירים את ה-ID החדש
     }
     @Query("SELECT * FROM Goal WHERE id = :goalId LIMIT 1")
     public abstract Goal getGoalById(long goalId);

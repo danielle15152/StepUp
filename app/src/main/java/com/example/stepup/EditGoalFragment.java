@@ -227,8 +227,9 @@ public class EditGoalFragment extends Fragment {
 
         Executors.newSingleThreadExecutor().execute(() -> {
             if (goalId == -1) {
-                // מטרה חדשה
-                dao.insertGoalWithReminder(currentGoalWithReminder.goal, currentGoalWithReminder.reminder);
+                // מטרה חדשה - נקבל את ה-ID החדש חזרה
+                long newId = dao.insertGoalWithReminder(currentGoalWithReminder.goal, currentGoalWithReminder.reminder);
+                currentGoalWithReminder.goal.id = (int)newId; // ונעדכן אותו כאן
             } else {
                 // עדכון מטרה קיימת
                 dao.updateGoalWithReminder(currentGoalWithReminder.goal, currentGoalWithReminder.reminder);
