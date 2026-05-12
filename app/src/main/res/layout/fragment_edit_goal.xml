@@ -39,6 +39,36 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp" />
 
+    <!-- הוספנו את החלק הזה לבחירת סוג התראה -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Notification Style:"
+        android:layout_marginTop="10dp"/>
+
+    <RadioGroup
+        android:id="@+id/rgNotificationType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rbGentle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gentle"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/rbTough"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tough"
+            android:layout_marginStart="16dp"/>
+
+    </RadioGroup>
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
