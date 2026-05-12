@@ -10,11 +10,12 @@ import androidx.room.PrimaryKey;
 public class Goal {
     public Goal() {}
 
-    public Goal(String name, String description, boolean active,  long categoryId) {
+    public Goal(String name, String description, boolean active,  long categoryId, String notificationType) {
         this.name = name;
         this.description = description;
         this.active = active;
         this.categoryId = categoryId;
+        this.notificationType = notificationType;
     }
     @PrimaryKey(autoGenerate = true)
     public int id;
@@ -38,6 +39,11 @@ public class Goal {
      * The category of the goal
      */
     public long categoryId;
+
+    /**
+     * The type of notification for the goal (e.g., "GENTLE" or "TOUGH")
+     */
+    public String notificationType;
 
 
 }
