@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
 
     <application
         android:allowBackup="true"
@@ -13,6 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StepUp">
+
+        <!-- רישום ה-BroadcastReceiver -->
+        <receiver android:name=".data.GoalNotificationReceiver" android:enabled="true"/>
+
         <activity
             android:name=".ActivitySetting"
             android:exported="false" />

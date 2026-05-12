@@ -20,6 +20,10 @@ public abstract class Dao {
     @Query("SELECT * FROM Goal")
     public abstract List<GoalWithReminder> getGoalsWithReminders();
 
+    @Transaction
+    @Query("SELECT * FROM Goal WHERE id = :goalId")
+    public abstract GoalWithReminder getGoalWithReminderById(long goalId);
+
     @Query("DELETE FROM Reminder WHERE id = :goalId")
     public abstract void deleteReminderByGoalId(long goalId);
 
