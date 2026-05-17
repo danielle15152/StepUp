@@ -32,11 +32,10 @@ android {
 }
 
 dependencies {
-
-
-    // הגדרות Room - גרסה מקוצרת
-    implementation("androidx.room:room-runtime:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
+    implementation(libs.gson)
 
     implementation(libs.appcompat)
     implementation(libs.material)

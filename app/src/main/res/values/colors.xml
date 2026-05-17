@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Category Colors -->
+    <color name="category_health">#FF6B6B</color> <!-- Light Coral -->
+    <color name="category_education">#4D96FF</color> <!-- Dodger Blue -->
+    <color name="category_sports">#4BC8A0</color> <!-- Medium Aquamarine -->
+    <color name="category_finance">#FFD166</color> <!-- Sunglow -->
 </resources>

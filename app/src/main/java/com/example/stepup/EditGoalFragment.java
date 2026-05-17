@@ -2,6 +2,7 @@ package com.example.stepup;
 
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,8 @@ import com.example.stepup.data.entities.Category;
 public class EditGoalFragment extends Fragment {
 
     private static final String ARG_GOAL_ID = "goal_id";
+    private static final String TAG = "NotificationFlow"; // תג לסינון הלוגים
+
 
     public static EditGoalFragment newInstance(long goalId) {
         EditGoalFragment f = new EditGoalFragment();
@@ -236,6 +239,7 @@ public class EditGoalFragment extends Fragment {
             }
             
             // תזמון ההתראה בכל מקרה (ליצירה או עדכון)
+            Log.d(TAG, "Calling NotificationScheduler from saveGoal for goal ID: " + currentGoalWithReminder.goal.id);
             NotificationScheduler.scheduleNotification(getContext(), currentGoalWithReminder.goal, currentGoalWithReminder.reminder);
 
             requireActivity().runOnUiThread(() -> {

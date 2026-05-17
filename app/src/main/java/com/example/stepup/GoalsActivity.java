@@ -1,24 +1,26 @@
 package com.example.stepup;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.Room;
 
-import com.example.stepup.data.AppDb;
+import com.example.stepup.data.AppDatabase;
 import com.example.stepup.data.Dao;
-import com.example.stepup.data.SeedDataHelper;
 import com.example.stepup.data.entities.GoalWithReminder;
 import com.example.stepup.ui.GoalsAdapter;
 
@@ -28,9 +30,14 @@ import java.util.concurrent.Executors;
 public class GoalsActivity extends AppCompatActivity {
     View fragmentContainer;// מיכל שלו נכנסים כל פעם הפרגמנט המתאים
 
-    private AppDb db; //מסד נתונים
     private Dao dao; //מה שמדבר ועושה פעולות על המסד נתונים. כמו להכניס, למחוק ...
     private GoalsAdapter adapter;// הופך את הקוד לויזואלי
+
+    // --- הוספת המנגנון לבקשת הרשאה ---
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                // אפשר להוסיף כאן לוגיקה אם רוצים - למשל, להראות הודעה אם המשתמש סירב
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +45,14 @@ public class GoalsActivity extends AppCompatActivity {
 
         EdgeToEdge.enable(this);//פורס את המסך על כל שטח המכשיר
         setContentView(R.layout.activity_goals);//מחבר בין הקוד לxml
+
+        // --- קריאה לפונקציה שמבקשת הרשאה ---
+        requestNotificationPermission();
+
+        // --- שימוש בשיטה המרכזית לקבלת מופע של מסד הנתונים ---
+        AppDatabase db = AppDatabase.getDatabase(getApplicationContext());
+        dao = db.dao();
+
 
         View root = findViewById(R.id.root);
         fragmentContainer = findViewById(R.id.fragmentContainer);
@@ -78,7 +93,7 @@ getSupportFragmentManager().addOnBackStackChangedListener(()->{
             public void onDeleteClicked(GoalWithReminder item) {
                 showDeleteConfirmDialog(item);//פותחים דיאלוג בעת לחיצה על כפתור מחיקה כדי לאשר את המחיקה
             }
-        });
+        }, dao);
 
         rvGoals.setAdapter(adapter);
         // 1. מוצאים את כפתור הפלוס מה-XML (נניח שקראת לו fabAddGoal)
@@ -94,17 +109,6 @@ getSupportFragmentManager().addOnBackStackChangedListener(()->{
             });
         }
 
-        db = Room.databaseBuilder(
-                        getApplicationContext(),
-                        AppDb.class,
-                        "stepup-db"
-                )
-                .fallbackToDestructiveMigration()
-                .build();
-
-        dao = db.dao();//שולפים את הדאו כדי שנוכל לעבוד איתו
-
-
         // הוספת קטגוריות בסיס אם הרשימה ריקה (רצוי להריץ בטרד נפרד)
         Executors.newSingleThreadExecutor().execute(() -> {
             if (dao.getAllCategories().isEmpty()) {
@@ -117,6 +121,20 @@ getSupportFragmentManager().addOnBackStackChangedListener(()->{
 
         loadGoals();//פונקציה שמביאה את הנתונים
     }
+
+    // --- הוספת הפונקציה שמבקשת הרשאה ---
+    private void requestNotificationPermission() {
+        // רלוונטי רק לאנדרואיד 13 (API 33) ומעלה
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // בודקים אם ההרשאה *לא* אושרה עדיין
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                // מקפיצים את חלון הבקשה
+                requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+    }
+
 
     public Dao getDao() {
         return dao;
