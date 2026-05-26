@@ -79,13 +79,12 @@ public class GoalsActivity extends AppCompatActivity implements NavigationView.O
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // ... (rest of the code is the same)
         Fragment selectedFragment = null;
         int itemId = item.getItemId();
 
         if (itemId == R.id.nav_home) {
             selectedFragment = new HomeFragment();
-        } else if (itemId == R.id.nav_progress) {
+        } else if (itemId == R.id.nav_progress_report) { // Changed to nav_progress_report
             selectedFragment = new ProgressFragment();
         } else if (itemId == R.id.nav_map) {
             selectedFragment = new MapFragment();

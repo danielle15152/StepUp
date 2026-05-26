@@ -6,9 +6,9 @@
             android:icon="@drawable/ic_home"
             android:title="Home" />
         <item
-            android:id="@+id/nav_progress"
+            android:id="@+id/nav_progress_report"
             android:icon="@drawable/ic_progress"
-            android:title="Progress" />
+            android:title="Progress Report" />
         <item
             android:id="@+id/nav_map"
             android:icon="@drawable/ic_map"

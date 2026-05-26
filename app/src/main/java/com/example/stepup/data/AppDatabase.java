@@ -10,9 +10,10 @@ import com.example.stepup.data.entities.Goal;
 import com.example.stepup.data.entities.GoalCompletion;
 import com.example.stepup.data.entities.GoalSkip;
 import com.example.stepup.data.entities.Reminder;
+import com.example.stepup.data.converters.DaysListConverter; // Import the converter
 
-@Database(entities = {Goal.class, Reminder.class, Category.class, GoalCompletion.class, GoalSkip.class}, version = 7, exportSchema = false)
-@TypeConverters({Converters.class})
+@Database(entities = {Goal.class, Reminder.class, Category.class, GoalCompletion.class, GoalSkip.class}, version = 9, exportSchema = false)
+@TypeConverters({Converters.class, DaysListConverter.class}) // Ensure Converters and DaysListConverter are registered
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract Dao dao();

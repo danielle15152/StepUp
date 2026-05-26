@@ -107,9 +107,9 @@ public abstract class Dao {
     public abstract GoalSkip getSkip(int goalId, long date);
 
     // Progress Tracking Query
-    @Query("SELECT g.id as goalId, g.name as goalName, " +
+    @Query("SELECT g.id as goalId, g.name as goalName, g.creationDate as creationDate, r.days as reminderDays, " +
            "(SELECT COUNT(*) FROM goal_completions WHERE goalId = g.id AND completionDate BETWEEN :startDate AND :endDate) as completionCount, " +
            "(SELECT COUNT(*) FROM goal_skips WHERE goalId = g.id AND skipDate BETWEEN :startDate AND :endDate) as skipCount " +
-           "FROM Goal g")
+           "FROM Goal g LEFT JOIN Reminder r ON g.id = r.id")
     public abstract List<GoalProgressStats> getProgressStatsInRange(long startDate, long endDate);
 }
