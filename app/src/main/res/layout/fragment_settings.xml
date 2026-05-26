@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient"
-    tools:context=".ActivitySetting">
+    tools:context=".ui.SettingsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,19 +23,6 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-            
-        <!-- Back Button -->
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="?attr/homeAsUpIndicator"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@android:color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvSettingsTitle"
-            app:layout_constraintBottom_toBottomOf="@id/tvSettingsTitle"
-            android:contentDescription="Back" />
 
         <!-- Section: General -->
         <TextView

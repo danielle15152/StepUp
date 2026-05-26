@@ -32,7 +32,14 @@ android {
 }
 
 dependencies {
-    
+    // Google Maps and Location Services
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
+
+    // Navigation Component
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
     implementation(libs.gson)

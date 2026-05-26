@@ -2,7 +2,6 @@ package com.example.stepup.ui;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import java.util.concurrent.Executors;
 public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHolder> {
 
     public interface GoalActionsListener {
+        void onItemClicked(GoalWithReminder item); // New action
         void onEditClicked(GoalWithReminder item);
         void onDeleteClicked(GoalWithReminder item);
     }
@@ -57,27 +57,30 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
 
         h.tvGoalName.setText(safe(gwr.goal.name));
 
-        // Format reminder details
         if (gwr.reminder != null && gwr.reminder.days != null && !gwr.reminder.days.isEmpty()) {
-            String daysStr = formatDays(gwr.reminder.days);
-            String timeStr = formatMinuteOfDay(gwr.reminder.minuteOfDay);
-            h.tvReminderDetails.setText(String.format("%s at %s", daysStr, timeStr));
-            h.tvReminderDetails.setVisibility(View.VISIBLE);
+            h.tvReminderDays.setText(formatDays(gwr.reminder.days));
+            h.tvReminderDays.setVisibility(View.VISIBLE);
+
+            if (gwr.reminder.latitude != null && gwr.reminder.longitude != null) {
+                h.tvReminderSpecifics.setText(String.format(Locale.getDefault(), "Lat: %.2f, Lon: %.2f", gwr.reminder.latitude, gwr.reminder.longitude));
+                h.tvReminderSpecifics.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_dialog_map, 0, 0, 0);
+            } else if(gwr.reminder.minuteOfDay != null) {
+                String timeStr = formatMinuteOfDay(gwr.reminder.minuteOfDay);
+                h.tvReminderSpecifics.setText("at " + timeStr);
+                h.tvReminderSpecifics.setCompoundDrawablesWithIntrinsicBounds(android.R.drawable.ic_menu_my_calendar, 0, 0, 0);
+            }
+            h.tvReminderSpecifics.setVisibility(View.VISIBLE);
         } else {
-            h.tvReminderDetails.setVisibility(View.GONE);
+            h.tvReminderDays.setVisibility(View.GONE);
+            h.tvReminderSpecifics.setVisibility(View.GONE);
         }
 
-        // Set category icon and color
         setCategoryIcon(h.ivCategoryIcon, gwr.goal.categoryId);
-
-
-        h.btnEdit.setOnClickListener(v -> {
-            if (listener != null) listener.onEditClicked(gwr);
-        });
-
-        h.btnDelete.setOnClickListener(v -> {
-            if (listener != null) listener.onDeleteClicked(gwr);
-        });
+        
+        // Set listeners
+        h.itemView.setOnClickListener(v -> listener.onItemClicked(gwr)); // Main item click
+        h.btnEdit.setOnClickListener(v -> listener.onEditClicked(gwr));
+        h.btnDelete.setOnClickListener(v -> listener.onDeleteClicked(gwr));
     }
 
     private void setCategoryIcon(ImageView imageView, long categoryId) {
@@ -85,23 +88,14 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
             String categoryName = dao.getCategoryNameById(categoryId);
             imageView.post(() -> {
                 Context context = imageView.getContext();
-                int iconResId = R.drawable.ic_category_health; // Default icon
-                int colorResId = R.color.category_health; // Default color
+                int iconResId = R.drawable.ic_category_health;
+                int colorResId = R.color.category_health;
 
                 if (categoryName != null) {
                     switch (categoryName.toLowerCase(Locale.ROOT)) {
-                        case "education":
-                            iconResId = R.drawable.ic_category_education;
-                            colorResId = R.color.category_education;
-                            break;
-                        case "sports":
-                            iconResId = R.drawable.ic_category_sports;
-                            colorResId = R.color.category_sports;
-                            break;
-                        case "finance":
-                            iconResId = R.drawable.ic_category_finance;
-                            colorResId = R.color.category_finance;
-                            break;
+                        case "education": iconResId = R.drawable.ic_category_education; colorResId = R.color.category_education; break;
+                        case "sports": iconResId = R.drawable.ic_category_sports; colorResId = R.color.category_sports; break;
+                        case "finance": iconResId = R.drawable.ic_category_finance; colorResId = R.color.category_finance; break;
                     }
                 }
                 imageView.setImageResource(iconResId);
@@ -110,7 +104,6 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         });
     }
 
-
     @Override
     public int getItemCount() {
         return items.size();
@@ -118,14 +111,15 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
 
     static class GoalsViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCategoryIcon;
-        TextView tvGoalName, tvReminderDetails;
+        TextView tvGoalName, tvReminderDays, tvReminderSpecifics;
         ImageButton btnEdit, btnDelete;
 
         GoalsViewHolder(@NonNull View itemView) {
             super(itemView);
             ivCategoryIcon = itemView.findViewById(R.id.ivCategoryIcon);
             tvGoalName = itemView.findViewById(R.id.tvGoalName);
-            tvReminderDetails = itemView.findViewById(R.id.tvReminderDetails);
+            tvReminderDays = itemView.findViewById(R.id.tvReminderDays);
+            tvReminderSpecifics = itemView.findViewById(R.id.tvReminderSpecifics);
             btnEdit = itemView.findViewById(R.id.btnEdit);
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }
@@ -137,18 +131,16 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         if (days == null || days.isEmpty()) return "No days";
         String[] names = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < days.size(); i++) {
-            int d = days.get(i);
-            String label = (d >= 0 && d <= 6) ? names[d] : "";
-            if (!label.isEmpty()) {
-                if (sb.length() > 0) sb.append(", ");
-                sb.append(label);
-            }
+        days.sort(Integer::compareTo);
+        for (int d : days) {
+            if (sb.length() > 0) sb.append(", ");
+            sb.append((d >= 0 && d <= 6) ? names[d] : "");
         }
         return sb.toString();
     }
 
-    private static String formatMinuteOfDay(int minuteOfDay) {
+    private static String formatMinuteOfDay(Integer minuteOfDay) {
+        if (minuteOfDay == null) return "";
         int h = Math.max(0, minuteOfDay) / 60;
         int m = Math.max(0, minuteOfDay) % 60;
         return String.format(Locale.US, "%02d:%02d", h, m);

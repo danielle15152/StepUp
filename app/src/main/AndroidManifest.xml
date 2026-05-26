@@ -2,8 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Permissions -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
 
     <application
@@ -16,24 +19,45 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StepUp">
 
-        <!-- רישום ה-BroadcastReceiver -->
-        <receiver android:name=".data.GoalNotificationReceiver" android:enabled="true"/>
+        <!-- ****************************************************************** -->
+        <!-- *** IMPORTANT: THIS IS YOUR GOOGLE MAPS API KEY - KEEP IT SECRET *** -->
+        <!-- ****************************************************************** -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDhgGGhW5Tw4L49rOPDUcODfffBcBBAEFk" />
 
-        <activity
-            android:name=".ActivitySetting"
-            android:exported="false" />
-        <activity
-            android:name=".GoalsActivity"
-            android:exported="false" />
+        <!-- Main entry point of the app -->
         <activity
             android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Main activity with navigation drawer -->
+        <activity
+            android:name=".GoalsActivity"
+            android:exported="false" />
+
+        <!-- Activity for picking a location from the map -->
+        <activity
+            android:name=".MapPickerActivity"
+            android:exported="false" />
+            
+        <!-- Activity to show goal details from a notification -->
+        <activity
+            android:name=".GoalDetailsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.App.BottomSheet" />
+
+
+        <!-- Receivers -->
+        <receiver android:name=".data.GoalNotificationReceiver" android:enabled="true"/>
+        <receiver android:name=".data.GeofenceBroadcastReceiver" android:enabled="true" android:exported="true"/>
+
+
     </application>
 
 </manifest>

@@ -10,22 +10,24 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import com.example.stepup.GoalsActivity;
+
+import com.example.stepup.GoalDetailsActivity;
 import com.example.stepup.R;
 import com.example.stepup.SplashActivity;
 import com.example.stepup.data.entities.GoalWithReminder;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GoalNotificationReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "NotificationFlow"; // תג לסינון הלוגים
+    private static final String TAG = "NotificationFlow";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i(TAG, "GoalNotificationReceiver onReceive triggered!");
 
-        int goalId = intent.getIntExtra("goal_id", -1);
+        long goalId = intent.getLongExtra("goal_id", -1); // Changed to getLongExtra
         Log.d(TAG, "Received goal_id: " + goalId);
 
         if (goalId == -1) {
@@ -33,7 +35,6 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
             return;
         }
 
-        // גישה למסד הנתונים צריכה להיות ברקע
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(context);
@@ -43,7 +44,6 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
                 Log.i(TAG, "Found goal '" + goalWithReminder.goal.name + "' in database. Proceeding to send notification.");
                 sendNotification(context, goalWithReminder);
 
-                // תזמון מחדש של ההתראה למועד הבא
                 Log.d(TAG, "Rescheduling notification for goal ID " + goalId);
                 NotificationScheduler.scheduleNotification(context, goalWithReminder.goal, goalWithReminder.reminder);
             } else {
@@ -53,10 +53,13 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
     }
 
     private void sendNotification(Context context, GoalWithReminder goalWithReminder) {
-        Intent resultIntent = new Intent(context, GoalsActivity.class);
+        // Intent to open GoalDetailsActivity
+        Intent resultIntent = new Intent(context, GoalDetailsActivity.class);
+        resultIntent.putExtra(GoalDetailsActivity.EXTRA_GOAL_ID, (long)goalWithReminder.goal.id);
+
         PendingIntent resultPendingIntent = PendingIntent.getActivity(
                 context,
-                goalWithReminder.goal.id,
+                goalWithReminder.goal.id, // Use goal id as request code for uniqueness
                 resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -72,11 +75,9 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true);
 
-        // בודקים אם יש הרשאה לפני שמציגים את ההתראה
         if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "POST_NOTIFICATIONS permission is GRANTED. Displaying notification.");
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-            notificationManager.notify(goalWithReminder.goal.id, builder.build());
+            NotificationManagerCompat.from(context).notify(goalWithReminder.goal.id, builder.build());
         } else {
             Log.e(TAG, "POST_NOTIFICATIONS permission is DENIED. Cannot display notification.");
         }

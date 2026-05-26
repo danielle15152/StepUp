@@ -6,4 +6,15 @@
     </style>
 
     <style name="Theme.StepUp" parent="Base.Theme.StepUp" />
+    
+    <!-- This theme is for the bottom sheet. It inherits from the main app theme 
+         to ensure all Material 3 components render correctly. -->
+    <style name="Theme.App.BottomSheet" parent="Theme.StepUp">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@style/Animation.App.BottomSheet</item>
+    </style>
+    
 </resources>

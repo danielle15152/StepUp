@@ -1,6 +1,7 @@
 package com.example.stepup.data.entities;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "categories")
@@ -13,6 +14,7 @@ public class Category {
 
     public Category() {}
 
+    @Ignore
     public Category(String name, boolean isDefault) {
         this.name = name;
         this.isDefault = isDefault;

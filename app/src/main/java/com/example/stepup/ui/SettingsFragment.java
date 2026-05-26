@@ -1,15 +1,18 @@
-package com.example.stepup;
+package com.example.stepup.ui;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.ImageButton;
-
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import com.example.stepup.R;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-public class ActivitySetting extends AppCompatActivity {
+public class SettingsFragment extends Fragment {
 
     private static final String PREFS_NAME = "StepUpPrefs";
     private static final String NOTIFICATION_SOUND_KEY = "notification_sound_enabled";
@@ -17,17 +20,21 @@ public class ActivitySetting extends AppCompatActivity {
     private SwitchMaterial switchNotificationSound;
     private SharedPreferences sharedPreferences;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_setting);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_settings, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // Initialize SharedPreferences
-        sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
         // Find views
-        switchNotificationSound = findViewById(R.id.switchNotificationSound);
-        ImageButton btnBack = findViewById(R.id.btnBack);
+        switchNotificationSound = view.findViewById(R.id.switchNotificationSound);
 
         // Load the saved preference and set the switch state
         loadPreference();
@@ -35,12 +42,6 @@ public class ActivitySetting extends AppCompatActivity {
         // Set a listener to save the preference when the switch is toggled
         switchNotificationSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
             savePreference(isChecked);
-        });
-
-        // Set a listener for the back button
-        btnBack.setOnClickListener(v -> {
-            // Finishes the current activity and returns to the previous one
-            finish();
         });
     }
 

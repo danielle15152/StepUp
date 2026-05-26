@@ -2,6 +2,7 @@ package com.example.stepup.data.entities;
 
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 
@@ -10,6 +11,7 @@ import androidx.room.PrimaryKey;
 public class Goal {
     public Goal() {}
 
+    @Ignore
     public Goal(String name, String description, boolean active,  long categoryId, String notificationType) {
         this.name = name;
         this.description = description;

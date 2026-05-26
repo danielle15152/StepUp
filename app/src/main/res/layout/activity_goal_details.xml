@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80000000"
+    tools:context=".GoalDetailsActivity">
+
+    <FrameLayout
+        android:id="@+id/bottom_sheet"
+        style="@style/Widget.MaterialComponents.BottomSheet.Modal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:background="@drawable/bottom_sheet_background_gentle"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <ImageView
+            android:id="@+id/ivBackgroundGraphic"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="bottom"
+            android:scaleType="fitEnd"
+            android:alpha="0.4"
+            tools:src="@drawable/ic_gentle_background"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="32dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/ivCategoryIcon"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        tools:src="@drawable/ic_category_health"
+                        app:tint="@android:color/white"
+                        android:background="@drawable/category_icon_background"
+                        android:padding="10dp"/>
+
+                    <TextView
+                        android:id="@+id/tvCategoryName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textSize="20sp"
+                        tools:text="Health"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvGoalName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:textSize="28sp"
+                    android:textStyle="bold"
+                    tools:text="Drink 2L of Water"/>
+
+                <TextView
+                    android:id="@+id/tvGoalDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="18sp"
+                    tools:text="Stay hydrated throughout the day."/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:background="?android:attr/listDivider"/>
+
+                <TextView
+                    android:id="@+id/tvReminderDays"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    tools:text="Mon, Wed, Fri"/>
+
+                <TextView
+                    android:id="@+id/tvReminderSpecifics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:textSize="16sp"
+                    tools:drawableStart="@android:drawable/ic_menu_my_calendar"
+                    tools:text="at 08:00"/>
+
+                <LinearLayout
+                    android:id="@+id/initial_action_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="32dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <Button
+                        android:id="@+id/btnSkip"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="16sp"
+                        android:text="Skip Today"/>
+
+                    <Button
+                        android:id="@+id/btnComplete"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textSize="16sp"
+                        android:text="I did it!"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/completed_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="32dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Completed for today!"
+                        android:textSize="18sp"
+                        android:textColor="?attr/colorPrimary"/>
+                        
+                    <Button
+                        android:id="@+id/btnUndoComplete"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Undo"/>
+                </LinearLayout>
+                
+                <LinearLayout
+                    android:id="@+id/skipped_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginTop="32dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Skipped for today."
+                        android:textSize="18sp"/>
+
+                    <Button
+                        android:id="@+id/btnUndoSkip"
+                        style="?attr/borderlessButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Undo"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

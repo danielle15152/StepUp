@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- אייקון הקטגוריה -->
         <ImageView
             android:id="@+id/ivCategoryIcon"
             android:layout_width="48dp"
@@ -29,7 +28,6 @@
             app:tint="@android:color/white"
             tools:src="@drawable/ic_category_health" />
 
-        <!-- שם המטרה -->
         <TextView
             android:id="@+id/tvGoalName"
             android:layout_width="0dp"
@@ -43,9 +41,9 @@
             app:layout_constraintTop_toTopOf="@id/ivCategoryIcon"
             tools:text="Drink 2L of Water" />
 
-        <!-- פרטי התזכורת -->
+        <!-- Reminder Days -->
         <TextView
-            android:id="@+id/tvReminderDetails"
+            android:id="@+id/tvReminderDays"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -54,9 +52,22 @@
             app:layout_constraintEnd_toEndOf="@id/tvGoalName"
             app:layout_constraintStart_toStartOf="@id/tvGoalName"
             app:layout_constraintTop_toBottomOf="@id/tvGoalName"
-            tools:text="Mon, Wed, Fri at 08:00" />
+            tools:text="Mon, Wed, Fri" />
+            
+        <!-- Reminder Specifics (Time or Location) -->
+        <TextView
+            android:id="@+id/tvReminderSpecifics"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            android:drawablePadding="4dp"
+            app:layout_constraintEnd_toEndOf="@id/tvGoalName"
+            app:layout_constraintStart_toStartOf="@id/tvGoalName"
+            app:layout_constraintTop_toBottomOf="@id/tvReminderDays"
+            tools:text="at 08:00"
+            tools:drawableStart="@android:drawable/ic_menu_my_calendar"/>
 
-        <!-- כפתור עריכה (אייקון) -->
         <ImageButton
             android:id="@+id/btnEdit"
             android:layout_width="48dp"
@@ -68,7 +79,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tint="?attr/colorControlNormal" />
 
-        <!-- כפתור מחיקה (אייקון) -->
         <ImageButton
             android:id="@+id/btnDelete"
             android:layout_width="48dp"

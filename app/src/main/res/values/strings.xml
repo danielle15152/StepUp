@@ -4,4 +4,6 @@
     <string name="channel_description">Notifications for your goals</string>
     <string name="edit_goal">Edit goal</string>
     <string name="delete_goal">Delete goal</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>
