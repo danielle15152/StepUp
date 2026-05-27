@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.stepup.data.entities.Goal; // Added explicit import
+import com.example.stepup.data.entities.Goal;
 import com.example.stepup.data.entities.GoalWithReminder;
 import com.example.stepup.data.entities.Reminder;
 import com.google.android.gms.location.Geofence;
@@ -77,9 +77,9 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 }
 
                 // All checks passed! Send notification
-                String title = "You're near your goal location!";
-                String message = "Reminder for: " + goalWithReminder.goal.name;
-                NotificationScheduler.showImmediateNotification(context, title, message, goalWithReminder.goal);
+                // The NotificationScheduler will now use the Goal object's notificationType
+                // to determine the title and message.
+                NotificationScheduler.showImmediateNotification(context, goalWithReminder.goal); // Pass the Goal object
 
                 // Update the timestamp in the database
                 reminder.lastLocationNotificationTimestamp = now;

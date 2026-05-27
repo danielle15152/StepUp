@@ -10,11 +10,13 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 
 import com.example.stepup.data.entities.Goal;
-import com.example.stepup.data.entities.Reminder; // The missing import
+import com.example.stepup.data.entities.Reminder;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+
+import java.util.Collections;
 
 public class GeofenceHelper {
 
@@ -57,21 +59,22 @@ public class GeofenceHelper {
             return;
         }
 
-        geofencingClient.addGeofences(geofencingRequest, getGeofencePendingIntent())
+        geofencingClient.addGeofences(geofencingRequest, getGeofencePendingIntent(goal.id)) // Pass goal.id
                 .addOnSuccessListener(aVoid -> Log.i(TAG, "Geofence added for goal ID: " + geofenceId))
                 .addOnFailureListener(e -> Log.e(TAG, "Failed to add geofence for goal ID: " + geofenceId, e));
     }
 
     public void removeGeofence(String geofenceId) {
-        geofencingClient.removeGeofences(java.util.Collections.singletonList(geofenceId))
+        geofencingClient.removeGeofences(Collections.singletonList(geofenceId))
                 .addOnSuccessListener(aVoid -> Log.i(TAG, "Geofence removed for goal ID: " + geofenceId))
                 .addOnFailureListener(e -> Log.e(TAG, "Failed to remove geofence for goal ID: " + geofenceId, e));
     }
 
-    private PendingIntent getGeofencePendingIntent() {
+    private PendingIntent getGeofencePendingIntent(long goalId) { // Added goalId parameter
         Intent intent = new Intent(context, GeofenceBroadcastReceiver.class);
+        intent.putExtra("goal_id", goalId); // Pass goalId
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
-        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        return PendingIntent.getBroadcast(context, (int) goalId, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
     }
 }

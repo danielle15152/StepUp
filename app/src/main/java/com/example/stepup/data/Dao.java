@@ -23,14 +23,18 @@ public abstract class Dao {
     @Transaction
     @Query("SELECT * FROM Goal")
     public abstract List<GoalWithReminder> getGoalsWithReminders();
-    
+
+    @Transaction
+    @Query("SELECT * FROM Goal g JOIN Reminder r ON g.id = r.id WHERE r.latitude IS NOT NULL AND r.longitude IS NOT NULL")
+    public abstract List<GoalWithReminder> getGoalsWithLocationReminders();
+
     @Query("SELECT * FROM Goal")
     public abstract List<Goal> getAllGoals();
 
     @Transaction
     @Query("SELECT * FROM Goal WHERE id = :goalId")
     public abstract GoalWithReminder getGoalWithReminderById(long goalId);
-    
+
     @Query("SELECT * FROM Goal WHERE id = :goalId LIMIT 1")
     public abstract Goal getGoalById(long goalId);
 
@@ -39,7 +43,7 @@ public abstract class Dao {
         deleteReminderByGoalId(goalId);
         deleteGoalById(goalId);
     }
-    
+
     @Query("DELETE FROM Reminder WHERE id = :goalId")
     protected abstract void deleteReminderByGoalId(long goalId);
 
@@ -59,7 +63,7 @@ public abstract class Dao {
         insertReminder(reminder);
         return goalId;
     }
-    
+
     @Update
     public abstract void updateGoal(Goal goal);
 
@@ -78,10 +82,10 @@ public abstract class Dao {
 
     @Query("SELECT * FROM categories")
     public abstract List<Category> getAllCategories();
-    
+
     @Query("SELECT name FROM categories WHERE id = :catId")
     public abstract String getCategoryNameById(long catId);
-    
+
     // Goal Status Queries
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertCompletion(GoalCompletion completion);
@@ -91,7 +95,7 @@ public abstract class Dao {
 
     @Query("SELECT * FROM goal_completions WHERE goalId = :goalId AND completionDate = :date")
     public abstract GoalCompletion getCompletion(int goalId, long date);
-    
+
     @Query("SELECT * FROM goal_completions WHERE completionDate = :date")
     public abstract List<GoalCompletion> getCompletionsForDate(long date);
 

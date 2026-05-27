@@ -27,8 +27,19 @@ public class NotificationScheduler {
     private static final String CHANNEL_ID = "stepup_goal_channel";
 
 
-    public static void showImmediateNotification(Context context, String title, String message, Goal goal) {
+    public static void showImmediateNotification(Context context, Goal goal) { // Updated signature
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        String title;
+        String message;
+
+        if ("TOUGH".equals(goal.notificationType)) {
+            title = goal.name; // Keep title as goal name for TOUGH
+            message = "No excuses. It's time to work on your goal!";
+        } else { // GENTLE or any other type
+            title = goal.name; // Keep title as goal name for GENTLE
+            message = "A small step today leads to a big success tomorrow. You can do it!";
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "StepUp Goal Reminders";

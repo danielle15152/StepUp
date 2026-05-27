@@ -55,12 +55,6 @@ public class HomeFragment extends Fragment {
         rvGoals = view.findViewById(R.id.rvGoals);
         emptyStateLayout = view.findViewById(R.id.empty_state_layout);
         rvGoals.setLayoutManager(new LinearLayoutManager(getContext()));
-        
-        requireActivity().getSupportFragmentManager().addOnBackStackChangedListener(()->{
-            if(requireActivity().getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                 loadGoals();
-            }
-        });
 
         adapter = new GoalsAdapter(new GoalsAdapter.GoalActionsListener() {
             @Override
@@ -104,7 +98,11 @@ public class HomeFragment extends Fragment {
                 dao.insertCategory(new com.example.stepup.data.entities.Category("Finance", true));
             }
         });
-
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
         loadGoals();
     }
 

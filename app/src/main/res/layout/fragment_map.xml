@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    tools:context=".ui.MapFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Map Fragment (Coming Soon)"
-        android:textSize="20sp"
-        android:layout_gravity="center"/>
+        android:layout_margin="16dp"
+        android:queryHint="Search for a location"
+        android:iconifiedByDefault="false"
+        android:background="@android:color/white"
+        android:elevation="5dp" />
 
-</FrameLayout>
+</RelativeLayout>

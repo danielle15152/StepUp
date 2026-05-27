@@ -93,7 +93,10 @@ public class GoalsActivity extends AppCompatActivity implements NavigationView.O
         }
 
         if (selectedFragment != null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, selectedFragment).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.nav_host_fragment, selectedFragment)
+                    .addToBackStack(null) // Add this line
+                    .commit();
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
