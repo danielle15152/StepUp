@@ -68,8 +68,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onEditClicked(GoalWithReminder item) {
                 long goalId = item.goal.id;
-                // אנימציה: ה-Edit form נכנס ב-fade, מה שעוזב נעלם ב-fade.
-                // בחזרה (back press) - אותו הדבר אבל הפוך.
                 requireActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(
@@ -90,7 +88,6 @@ public class HomeFragment extends Fragment {
 
         View fab = view.findViewById(R.id.fabAddGoal);
         fab.setOnClickListener(v -> {
-            // אנימציה זהה למעבר ל-Edit Goal
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
                     .setCustomAnimations(
@@ -101,9 +98,7 @@ public class HomeFragment extends Fragment {
                     .commit();
         });
 
-        // אנימציית כניסה ל-FAB - מתחיל בגודל 0 ושקוף, גדל לחיים
-        // עם overshoot (חורג מעט מעבר ל-1 ואז חוזר). יוצר תחושת
-        // "קפיצה" קלה במקום הופעה משעממת.
+        // אנימציית קפיצה קטנה של ה-FAB בכניסה
         fab.setScaleX(0f);
         fab.setScaleY(0f);
         fab.setAlpha(0f);
@@ -137,8 +132,6 @@ public class HomeFragment extends Fragment {
                 getActivity().runOnUiThread(() -> {
                     adapter.setItems(items);
                     updateVisibility(items.isEmpty());
-                    // הפעלת אנימציית fall-down של כל הפריטים מחדש,
-                    // אחרי שהרשימה נטענה
                     rvGoals.scheduleLayoutAnimation();
                 });
             }
@@ -157,13 +150,16 @@ public class HomeFragment extends Fragment {
 
 
     private void showDeleteConfirmDialog(GoalWithReminder item) {
-        String goalName = (item.goal != null && item.goal.name != null) ? item.goal.name : "this goal";
+        boolean hasName = item.goal != null && item.goal.name != null && !item.goal.name.isEmpty();
+        String message = hasName
+                ? getString(R.string.delete_dialog_message, item.goal.name)
+                : getString(R.string.delete_dialog_message_generic);
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle("Delete goal?")
-                .setMessage("Are you sure you want to delete \"" + goalName + "\"? This cannot be undone.")
-                .setNegativeButton("Cancel", (d, which) -> d.dismiss())
-                .setPositiveButton("Delete", null)
+                .setTitle(R.string.delete_dialog_title)
+                .setMessage(message)
+                .setNegativeButton(R.string.action_cancel, (d, which) -> d.dismiss())
+                .setPositiveButton(R.string.action_delete, null)
                 .create();
 
         dialog.setOnShowListener(d -> {

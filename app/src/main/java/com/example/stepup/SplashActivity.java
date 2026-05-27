@@ -1,5 +1,5 @@
 package com.example.stepup;
-//המסך פתיחה של האפליקציה
+// המסך פתיחה של האפליקציה
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -20,84 +20,68 @@ import androidx.core.content.ContextCompat;
 public class SplashActivity extends AppCompatActivity {
 
     public static final String GOAL_NOTIFICATION_CHANNEL_ID = "goal_notifications";
-    private static final long SPLASH_DURATION_MS = 1000; // adjust as needed
+    private static final long SPLASH_DURATION_MS = 1000;
 
-    // מנגנון מודרני לבקשת הרשאות. הוא מטפל בהצגת הבקשה ובקבלת התשובה מהמשתמש
+    // מנגנון לבקשת הרשאה מהמשתמשת - מוצג כדיאלוג מערכת והתוצאה חוזרת ב-callback
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                // לא עושים כלום עם התשובה כרגע, אבל בעתיד אפשר להציג הודעה אם המשתמש סירב
                 proceedToApp();
             });
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // החלת ערכת הנושא השמורה לפני setContentView, כדי שהמסך
-        // ייטען מיד עם הצבעים הנכונים (ללא הבהוב).
+        // טוענים את ערכת הנושא לפני setContentView כדי שהמסך יופיע ישר במצב הנכון
         applyStoredThemeMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // יצירת ערוץ התראות ובקשת הרשאה מהמשתמש
         createNotificationChannel();
         askForNotificationPermission();
     }
 
-    /**
-     * קורא את ערכת הנושא השמורה מ-SharedPreferences ומיישם אותה.
-     * אם אין ערך שמור - ברירת המחדל היא "לפי המכשיר".
-     */
+    // טעינת ערכת הנושא שהמשתמשת בחרה בהגדרות, או "לפי המכשיר" אם עוד לא בחרה
     private void applyStoredThemeMode() {
         SharedPreferences prefs = getSharedPreferences("StepUpPrefs", Context.MODE_PRIVATE);
         int themeMode = prefs.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         AppCompatDelegate.setDefaultNightMode(themeMode);
     }
 
-    // פונקציה שממשיכה לפתיחת האפליקציה אחרי שהטיפול בהרשאות הסתיים
+    // מעבר למסך הראשי אחרי שניה - נותן זמן ל-splash להופיע
     private void proceedToApp() {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             Intent intent = new Intent(SplashActivity.this, GoalsActivity.class);
             startActivity(intent);
-
-            // Cross-fade transition
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-
-            // Prevent returning to splash on back press
+            // finish כדי שלא נוכל לחזור ל-splash בלחיצת back
             finish();
         }, SPLASH_DURATION_MS);
     }
 
-    // פונקציה שיוצרת את ערוץ ההתראות של האפליקציה
+    // יוצרים ערוץ התראות פעם אחת בהפעלה הראשונה - אחר כך לא ניתן לשנות אותו
     private void createNotificationChannel() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name); // צריך להוסיף את הטקסט לקבצי התרגום
-            String description = getString(R.string.channel_description); // צריך להוסיף את הטקסט לקבצי התרגום
-            int importance = NotificationManager.IMPORTANCE_HIGH; // חשיבות גבוהה כדי שההתראה תקפוץ
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel(GOAL_NOTIFICATION_CHANNEL_ID, name, importance);
             channel.setDescription(description);
 
-            // רישום הערוץ במערכת. אחרי שקוראים לפונקציה הזו אי אפשר לשנות את הגדרות הערוץ
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
     }
 
-    // פונקציה שבודקת ומבקשת הרשאת התראות
+    // בודקים אם המשתמשת אישרה הצגת התראות. אם לא - מציגים דיאלוג בקשה
     private void askForNotificationPermission() {
-        // הרשאה זו נדרשת רק בגרסאות אנדרואיד 13 (API 33) ומעלה
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // בודקים אם ההרשאה כבר ניתנה
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) ==
                     PackageManager.PERMISSION_GRANTED) {
-                // אם כן, פשוט ממשיכים לאפליקציה
                 proceedToApp();
             } else {
-                // אם לא, מקפיצים את בקשת ההרשאה
                 requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
             }
         } else {
-            // בגרסאות ישנות יותר, אין צורך לבקש הרשאה, אז ממשיכים ישר
             proceedToApp();
         }
     }

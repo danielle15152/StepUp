@@ -25,10 +25,7 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(TAG, "GoalNotificationReceiver onReceive triggered!");
-
-        long goalId = intent.getLongExtra("goal_id", -1); // Changed to getLongExtra
-        Log.d(TAG, "Received goal_id: " + goalId);
+        long goalId = intent.getLongExtra("goal_id", -1);
 
         if (goalId == -1) {
             Log.e(TAG, "onReceive: Invalid goal_id received.");
@@ -41,10 +38,8 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
             GoalWithReminder goalWithReminder = db.dao().getGoalWithReminderById(goalId);
 
             if (goalWithReminder != null) {
-                Log.i(TAG, "Found goal '" + goalWithReminder.goal.name + "' in database. Proceeding to send notification.");
                 sendNotification(context, goalWithReminder);
-
-                Log.d(TAG, "Rescheduling notification for goal ID " + goalId);
+                // קביעת ההתראה הבאה לפי הימים בתזכורת
                 NotificationScheduler.scheduleNotification(context, goalWithReminder.goal, goalWithReminder.reminder);
             } else {
                 Log.e(TAG, "Could not find GoalWithReminder in database for goal_id: " + goalId);
@@ -53,19 +48,18 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
     }
 
     private void sendNotification(Context context, GoalWithReminder goalWithReminder) {
-        // Intent to open GoalDetailsActivity
         Intent resultIntent = new Intent(context, GoalDetailsActivity.class);
         resultIntent.putExtra(GoalDetailsActivity.EXTRA_GOAL_ID, (long)goalWithReminder.goal.id);
 
         PendingIntent resultPendingIntent = PendingIntent.getActivity(
                 context,
-                goalWithReminder.goal.id, // Use goal id as request code for uniqueness
+                goalWithReminder.goal.id,
                 resultIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
         String title = goalWithReminder.goal.name;
-        String text = getNotificationText(goalWithReminder.goal.notificationType);
+        String text = getNotificationText(context, goalWithReminder.goal.notificationType);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, SplashActivity.GOAL_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_runner)
@@ -76,18 +70,17 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
                 .setAutoCancel(true);
 
         if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            Log.i(TAG, "POST_NOTIFICATIONS permission is GRANTED. Displaying notification.");
             NotificationManagerCompat.from(context).notify(goalWithReminder.goal.id, builder.build());
         } else {
             Log.e(TAG, "POST_NOTIFICATIONS permission is DENIED. Cannot display notification.");
         }
     }
 
-    private String getNotificationText(String notificationType) {
+    private String getNotificationText(Context context, String notificationType) {
         if ("TOUGH".equals(notificationType)) {
-            return "No excuses. It's time to work on your goal!";
+            return context.getString(R.string.notification_message_tough);
         } else {
-            return "A small step today leads to a big success tomorrow. You can do it!";
+            return context.getString(R.string.notification_message_gentle);
         }
     }
 }

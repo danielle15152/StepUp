@@ -54,9 +54,7 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // הכותרת מוגדרת ב-XML דרך app:title
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        // כפתור החזרה בסרגל הכלים
         toolbar.setNavigationOnClickListener(v -> finish());
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -68,23 +66,17 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
         MaterialButton confirmButton = findViewById(R.id.confirm_location_button);
         confirmButton.setOnClickListener(v -> {
             if (selectedLocation == null) {
-                Toast.makeText(this, "יש לבחור מיקום על המפה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.map_select_on_map, Toast.LENGTH_SHORT).show();
                 return;
             }
-            // עושים reverse geocoding ב-background, ואז מסיימים ומחזירים תוצאה.
-            confirmButton.setEnabled(false); // למנוע לחיצות כפולות
+            confirmButton.setEnabled(false);
             confirmAndReverseGeocode(selectedLocation.latitude, selectedLocation.longitude);
         });
 
-        // SearchView לחיפוש מיקום לפי שם (זהה ל-MapFragment הראשי)
         SearchView searchView = findViewById(R.id.searchView);
         setupSearchView(searchView);
     }
 
-    /**
-     * מגדיר את ה-SearchView לחיפוש מיקום לפי טקסט.
-     * משתמש ב-Geocoder להמרת שם המיקום לקואורדינטות.
-     */
     private void setupSearchView(SearchView searchView) {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -100,16 +92,7 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    /**
-     * מחפש מיקום לפי שם ומעביר את המצלמה אליו.
-     *
-     * חשוב: Geocoder.getFromLocationName() היא קריאה רשתית סינכרונית
-     * שיכולה לקחת כמה שניות. אסור להריץ אותה ב-Main Thread כי זה
-     * חוסם את ה-UI ועלול לזרוק DEADLINE_EXCEEDED.
-     *
-     * הפתרון: ריצה ב-Executor (background thread), והעברת התוצאה
-     * חזרה ל-Main Thread דרך runOnUiThread.
-     */
+    // Geocoder עושה קריאת רשת, חייב לרוץ ב-background thread
     private void searchLocation(String locationName) {
         if (locationName == null || locationName.isEmpty()) return;
         if (mMap == null) return;
@@ -123,18 +106,15 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
                         Address address = addressList.get(0);
                         LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                        // עדכון ה-marker אוטומטית - חוסך מהמשתמש להקליק שוב
                         updateMarker(latLng);
                     } else {
-                        Toast.makeText(this, "המיקום לא נמצא", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.map_location_not_found, Toast.LENGTH_SHORT).show();
                     }
                 });
             } catch (IOException e) {
                 e.printStackTrace();
                 runOnUiThread(() ->
-                        Toast.makeText(this,
-                                "שגיאה בחיפוש המיקום - בדקי את החיבור לאינטרנט",
-                                Toast.LENGTH_SHORT).show());
+                        Toast.makeText(this, R.string.map_search_error, Toast.LENGTH_SHORT).show());
             }
         });
     }
@@ -148,14 +128,7 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * עושה reverse geocoding (קואורדינטות → שם מיקום) ב-background thread,
-     * ואז מחזיר את התוצאה ב-Intent ומסיים את ה-Activity.
-     *
-     * אם ה-geocoding נכשל (אין רשת וכו'), אנחנו עדיין מחזירים את
-     * הקואורדינטות עם locationName=null. ה-UI ידע להתמודד עם זה
-     * (יציג את הקואורדינטות במקום השם).
-     */
+    // אם ה-geocoding נכשל מחזיר locationName=null וה-UI מציג קואורדינטות
     private void confirmAndReverseGeocode(double lat, double lng) {
         Executors.newSingleThreadExecutor().execute(() -> {
             String locationName = null;
@@ -167,7 +140,6 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                // נמשיכים בלי שם - השם יישאר null וה-UI יציג קואורדינטות
             }
 
             final String finalLocationName = locationName;
@@ -182,20 +154,11 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
-    /**
-     * מקבל Address ומחזיר string קצר וקריא.
-     * עדיפויות:
-     *  1. רחוב + מספר + עיר ("הרצל 12, רמת גן")
-     *  2. רחוב + עיר ("ככר רבין, תל אביב")
-     *  3. שכונה + עיר
-     *  4. featureName (POI כמו מסעדה/פארק)
-     *  5. addressLine(0) - שורה מלאה מ-Geocoder כ-fallback
-     */
+    // בונה כתובת קצרה: רחוב+מספר+עיר, או fallback ל-feature/subLocality
     private static String formatAddress(Address addr) {
         if (addr == null) return null;
         StringBuilder sb = new StringBuilder();
 
-        // קומבינציה של רחוב/feature + מספר
         String street = addr.getThoroughfare();
         String streetNumber = addr.getSubThoroughfare();
         String feature = addr.getFeatureName();
@@ -208,20 +171,17 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
             }
         } else if (feature != null && !feature.isEmpty()
                 && !feature.equals(streetNumber)) {
-            // featureName שונה ממספר בית (לעיתים geocoder מחזיר את המספר כ-feature)
             sb.append(feature);
         } else if (subLocality != null && !subLocality.isEmpty()) {
             sb.append(subLocality);
         }
 
-        // הוספת שם העיר (אם יש)
         String city = addr.getLocality();
         if (city != null && !city.isEmpty()) {
             if (sb.length() > 0) sb.append(", ");
             sb.append(city);
         }
 
-        // fallback סופי - שורה מלאה
         if (sb.length() == 0) {
             String fullLine = addr.getAddressLine(0);
             if (fullLine != null) sb.append(fullLine);
@@ -234,61 +194,48 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
-        // הפעלת כפתורי הזום (+/-) של Google Maps בפינה הימנית-תחתונה.
-        // זהה ל-MapFragment הראשי.
         mMap.getUiSettings().setZoomControlsEnabled(true);
-        // המחווה של pinch-to-zoom גם מופעלת ע"י Google Maps כברירת מחדל,
-        // אבל נוודא ליתר ביטחון.
         mMap.getUiSettings().setZoomGesturesEnabled(true);
-        // הפעלת כפתור "המיקום שלי" אם יש הרשאה
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-        // נסה לעבור למיקום הנוכחי של המשתמש
         moveToCurrentLocation();
 
         mMap.setOnMapClickListener(this::updateMarker);
     }
 
     private void moveToCurrentLocation() {
-        // Check for location permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true); // Show the blue dot and the "center me" button
+            mMap.setMyLocationEnabled(true);
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, location -> {
                         if (location != null) {
-                            // Got a last known location. Use it.
                             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-                            // Pre-select this location for the user
                             updateMarker(currentLocation);
                         } else {
-                            // Last location is null, fall back to default
                             moveToDefaultLocation();
                         }
                     });
         } else {
-            // No permission, fall back to default
             moveToDefaultLocation();
         }
     }
 
     private void moveToDefaultLocation() {
-        // Default location (e.g., Tel Aviv)
+        // ברירת מחדל - תל אביב
         LatLng defaultLocation = new LatLng(32.0853, 34.7818);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 10));
     }
-    
+
     private void updateMarker(LatLng latLng) {
         selectedLocation = latLng;
         if (selectedLocationMarker == null) {
-            // יצירת marker חדש
             selectedLocationMarker = mMap.addMarker(
-                    new MarkerOptions().position(latLng).title("המיקום שנבחר"));
+                    new MarkerOptions().position(latLng)
+                            .title(getString(R.string.map_selected_location_title)));
         } else {
-            // הזזת ה-marker הקיים
             selectedLocationMarker.setPosition(latLng);
         }
-        // אנימציה למיקום החדש
         mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
     }
 }

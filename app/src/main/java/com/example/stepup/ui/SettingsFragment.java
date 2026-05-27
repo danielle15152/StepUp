@@ -16,22 +16,12 @@ import com.example.stepup.R;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
-/**
- * מסך הגדרות.
- *
- * שתי הגדרות פעילות:
- *  1. צלילי התראה (boolean ב-SharedPreferences)
- *  2. ערכת נושא (Light/Dark/Auto, נשמר ב-SharedPreferences ומוחל
- *     ב-AppCompatDelegate.setDefaultNightMode)
- */
 public class SettingsFragment extends Fragment {
 
     private static final String PREFS_NAME = "StepUpPrefs";
     private static final String NOTIFICATION_SOUND_KEY = "notification_sound_enabled";
     private static final String THEME_MODE_KEY = "theme_mode";
 
-    // ערכים אפשריים ל-theme: 1=Light, 2=Dark, 0=Auto (לפי המכשיר)
-    // המספרים מתאימים ל-AppCompatDelegate.MODE_NIGHT_NO/_YES/_FOLLOW_SYSTEM
     private static final int THEME_LIGHT = AppCompatDelegate.MODE_NIGHT_NO;
     private static final int THEME_DARK = AppCompatDelegate.MODE_NIGHT_YES;
     private static final int THEME_AUTO = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
@@ -57,14 +47,11 @@ public class SettingsFragment extends Fragment {
         switchNotificationSound = view.findViewById(R.id.switchNotificationSound);
         chipGroupTheme = view.findViewById(R.id.chipGroupTheme);
 
-        // טעינת הערכים הנוכחיים מ-SharedPreferences והגדרת ה-UI
         loadCurrentValues();
 
-        // מאזין לשינוי במצב ההתראות
         switchNotificationSound.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> saveNotificationSound(isChecked));
 
-        // מאזין לשינוי בערכת הנושא - מיישם מיד ושומר
         chipGroupTheme.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) return;
             int checkedId = checkedIds.get(0);
@@ -74,13 +61,11 @@ public class SettingsFragment extends Fragment {
             else                                          themeMode = THEME_AUTO;
 
             saveThemeMode(themeMode);
-            // החלת ערכת הנושא בזמן אמת. המסך יתעדכן אוטומטית.
             AppCompatDelegate.setDefaultNightMode(themeMode);
         });
     }
 
     private void loadCurrentValues() {
-        // ברירת מחדל: צלילי התראה מופעלים, ערכת נושא לפי המכשיר
         boolean soundEnabled = sharedPreferences.getBoolean(NOTIFICATION_SOUND_KEY, true);
         switchNotificationSound.setChecked(soundEnabled);
 

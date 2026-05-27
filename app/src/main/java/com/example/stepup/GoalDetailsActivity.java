@@ -3,7 +3,6 @@ package com.example.stepup;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -32,25 +31,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 
-/**
- * מציג את פרטי המטרה ב-bottom sheet, ומאפשר לסמן השלמה/דילוג.
- *
- * הגרדיאנט של ה-sheet נבחר דינמית לפי שעת התזכורת (או מיקום) -
- * זהה ללוגיקה ב-GoalsAdapter כך שיש המשכיות ויזואלית כשלוחצים על
- * כרטיסיה ועוברים ל-sheet.
- */
 public class GoalDetailsActivity extends AppCompatActivity {
 
     public static final String EXTRA_GOAL_ID = "extra_goal_id";
 
     private enum GoalStatus {
-        INITIAL,         // היום פעיל, מחכים לסטטוס
-        COMPLETED,       // המשתמש סימן ✓
-        SKIPPED,         // המשתמש בחר לדלג
-        INACTIVE_TODAY   // היום לא בימי התזכורת - בלי כפתורי פעולה
+        INITIAL,
+        COMPLETED,
+        SKIPPED,
+        INACTIVE_TODAY
     }
 
-    // ימי השבוע בעברית (אינדקס 0=ראשון)
     private static final String[] DAYS_HE_FULL = {"ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"};
 
     private Dao dao;
@@ -58,7 +49,6 @@ public class GoalDetailsActivity extends AppCompatActivity {
     private GoalStatus currentStatus;
     private BottomSheetBehavior<FrameLayout> bottomSheetBehavior;
 
-    // Views
     private FrameLayout bottomSheet;
     private ImageView ivBackgroundGraphic, ivCategoryIcon;
     private TextView tvCategoryName, tvGoalName, tvGoalDescription,
@@ -114,7 +104,6 @@ public class GoalDetailsActivity extends AppCompatActivity {
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
         });
-        // לחיצה מחוץ ל-sheet סוגרת אותו
         mainContent.setOnClickListener(
                 v -> bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN));
     }
@@ -123,8 +112,6 @@ public class GoalDetailsActivity extends AppCompatActivity {
         Executors.newSingleThreadExecutor().execute(() -> {
             goalWithReminder = dao.getGoalWithReminderById(goalId);
             if (goalWithReminder != null) {
-                // קודם בודקים אם המטרה פעילה היום (לפי ימי השבוע ב-reminder).
-                // אם לא - אין טעם להציג כפתורי "דלגי/עשיתי", הם לא רלוונטיים.
                 if (!isGoalActiveToday(goalWithReminder)) {
                     currentStatus = GoalStatus.INACTIVE_TODAY;
                 } else {
@@ -144,28 +131,15 @@ public class GoalDetailsActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * בודק אם המטרה פעילה היום על פי ימי השבוע ב-reminder.
-     *
-     * Calendar.DAY_OF_WEEK מחזיר 1=ראשון..7=שבת, אבל ב-Reminder.days
-     * אנחנו משתמשים ב-0=ראשון..6=שבת (כדי להתאים לאינדקסים של
-     * cgDays.getChildAt(i)). אז מחסירים 1 כדי להמיר.
-     */
+    // Calendar.DAY_OF_WEEK הוא 1-7, אצלנו ב-days זה 0-6 אז מורידים 1
     private static boolean isGoalActiveToday(GoalWithReminder gwr) {
         if (gwr.reminder == null
                 || gwr.reminder.days == null
                 || gwr.reminder.days.isEmpty()) {
-            Log.d("GoalDetails",
-                  "isGoalActiveToday: no days defined - treating as active");
             return true;
         }
         int todayIndex = Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1;
-        boolean active = gwr.reminder.days.contains(todayIndex);
-        Log.d("GoalDetails",
-              "isGoalActiveToday: todayIndex=" + todayIndex
-                      + " days=" + gwr.reminder.days
-                      + " active=" + active);
-        return active;
+        return gwr.reminder.days.contains(todayIndex);
     }
 
     private void populateUI() {
@@ -176,12 +150,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
         Reminder reminder = goalWithReminder.reminder;
 
-        // הרקע של ה-sheet ייבנה דינמית ב-setCategoryInfo (כי הצבע
-        // תלוי בקטגוריה שנטענת ברקע מ-DB).
-
-        // טקסטים
         tvGoalName.setText(safe(goalWithReminder.goal.name));
-        // הסתרה של תיאור אם הוא ריק כדי שלא ייווצר רווח מיותר
         if (goalWithReminder.goal.description != null
                 && !goalWithReminder.goal.description.trim().isEmpty()) {
             tvGoalDescription.setText(goalWithReminder.goal.description);
@@ -191,7 +160,6 @@ public class GoalDetailsActivity extends AppCompatActivity {
         }
         setCategoryInfo(goalWithReminder.goal.categoryId, reminder);
 
-        // ימים + מידע על שעה/מיקום - שניהם עם אייקון מתאים ליד הטקסט
         if (reminder != null && reminder.days != null && !reminder.days.isEmpty()) {
             tvReminderDays.setText(formatDaysFull(reminder.days));
             tvReminderDays.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -202,7 +170,6 @@ public class GoalDetailsActivity extends AppCompatActivity {
         }
 
         if (reminder != null && reminder.latitude != null && reminder.longitude != null) {
-            // עדיפות: שם מיקום קריא; fallback: קואורדינטות.
             String locText;
             if (reminder.locationName != null && !reminder.locationName.isEmpty()) {
                 locText = reminder.locationName;
@@ -232,11 +199,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         btnUndoSkip.setOnClickListener(v -> setStatus(GoalStatus.INITIAL));
     }
 
-    /**
-     * בונה GradientDrawable של ה-sheet עם פינות עליונות בלבד (28dp).
-     * הצבעים זהים ללוגיקה ב-GoalsAdapter (קטגוריה + isTough),
-     * אבל הפינות שונות כי ה-sheet "צמוד" לתחתית המסך.
-     */
+    // אותם צבעים כמו ב-GoalsAdapter, אבל רק עם פינות עליונות מעוגלות
     private static GradientDrawable buildSheetGradient(Context ctx,
                                                        String categoryName,
                                                        boolean isTough) {
@@ -246,10 +209,10 @@ public class GoalDetailsActivity extends AppCompatActivity {
                 GradientDrawable.Orientation.TL_BR, colors);
         float topR = dpToPx(ctx, 28f);
         gd.setCornerRadii(new float[]{
-                topR, topR,   // top-left
-                topR, topR,   // top-right
-                0, 0,         // bottom-right
-                0, 0          // bottom-left
+                topR, topR,
+                topR, topR,
+                0, 0,
+                0, 0
         });
         return gd;
     }
@@ -278,11 +241,9 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
         Executors.newSingleThreadExecutor().execute(() -> {
             long today = getTodayAsLong();
-            // ניקוי סטטוס קודם ליום זה
             dao.deleteCompletion(goalWithReminder.goal.id, today);
             dao.deleteSkip(goalWithReminder.goal.id, today);
 
-            // הוספת הסטטוס החדש
             if (newStatus == GoalStatus.COMPLETED) {
                 dao.insertCompletion(new GoalCompletion(goalWithReminder.goal.id, today));
             } else if (newStatus == GoalStatus.SKIPPED) {
@@ -291,15 +252,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * טוען את שם הקטגוריה, ובונה את הרקע הגרדיאנט הדינמי של ה-sheet.
-     *
-     * הצבע נקבע לפי הקטגוריה (בריאות=ורוד, ספורט=מנטה, וכו'), והגוון
-     * תלוי ב-isTough (כהה משמעותית). אייקון הקטגוריה אותו דבר ב-TOUGH
-     * וב-GENTLE - כדי שתמיד יהיה ניתן לזהות את סוג המטרה במבט.
-     *
-     * אם זו תזכורת-מיקום: ה-decoration הגדול ברקע הוא סיכת מפה.
-     */
+    // טוען את הקטגוריה, ובונה את הרקע של ה-sheet לפי הקטגוריה ו-isTough
     private void setCategoryInfo(long categoryId, Reminder reminder) {
         boolean isLocationBased = reminder != null
                 && reminder.latitude != null
@@ -314,23 +267,15 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 tvCategoryName.setText(displayName + " · " + styleBadge);
-                // אייקון הקטגוריה - תמיד הקטגוריה האמיתית, כדי שניתן יהיה
-                // לזהות את סוג המטרה במבט ראשון.
                 ivCategoryIcon.setImageResource(iconResId);
                 ivCategoryIcon.setBackgroundResource(R.drawable.bg_category_chip);
-                // ה-decoration הגדול ברקע
                 ivBackgroundGraphic.setImageResource(
                         isLocationBased ? R.drawable.ic_decor_pin : iconResId);
-                // הרקע של ה-sheet - גרדיאנט דינמי לפי קטגוריה + isTough.
-                // ב-TOUGH הצבע כהה משמעותית, ה-scrim הקיים מבטיח קריאות.
                 bottomSheet.setBackground(buildSheetGradient(this, categoryName, isTough));
             });
         });
     }
 
-    /**
-     * ממיר את שם הקטגוריה (באנגלית, כפי שמופיע ב-DB) לעברית להצגה.
-     */
     private static String translateCategoryToHebrew(String englishName) {
         if (englishName == null) return "";
         switch (englishName.toLowerCase(Locale.ROOT)) {
@@ -360,10 +305,7 @@ public class GoalDetailsActivity extends AppCompatActivity {
 
     private static String safe(String s) { return s == null ? "" : s; }
 
-    /**
-     * "ראשון, שני, שלישי..." (שמות מלאים, בעברית).
-     * אם 7 ימים → "כל יום".
-     */
+    // אם בחרו את כל 7 הימים מחזיר "כל יום" במקום רשימה
     private static String formatDaysFull(List<Integer> days) {
         if (days == null || days.isEmpty()) return "";
         days.sort(Integer::compareTo);

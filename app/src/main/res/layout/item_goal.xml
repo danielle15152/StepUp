@@ -39,8 +39,8 @@
         android:id="@+id/cardBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_card_noon"
-        tools:background="@drawable/bg_card_morning">
+        android:background="@color/cloud_200"
+        tools:background="@color/brand_indigo">
 
         <!-- שכבה 2: scrim - גרדיאנט שחור שקוף, יושב ישר על הרקע
              ומבטיח קונטרסט לקריאות הטקסט -->

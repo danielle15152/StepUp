@@ -25,11 +25,10 @@
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_sheet_noon"
+        android:background="@color/brand_indigo"
         android:clipToOutline="true"
         android:outlineProvider="background"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        tools:background="@drawable/bg_sheet_morning">
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <!-- שכבה 1: אייקון דקורטיבי גדול בפינה הימנית-עליונה.
              alpha 0.18 כי הוא יושב מעל הגרדיאנט הצבעוני (לא מעל scrim כהה).

@@ -20,12 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Adapter עבור רשימת התקדמות המטרות.
- *
- * כל כרטיסייה מציגה: שם המטרה, אחוז ההצלחה, פס התקדמות, וה-"X מתוך Y ימים".
- * צבע פס ההתקדמות נקבע דינמית לפי האחוז - feedback ויזואלי לרמת ההצלחה.
- */
 public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.ProgressViewHolder> {
 
     private final List<GoalProgress> items = new ArrayList<>();
@@ -54,13 +48,7 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.Progre
         return items.size();
     }
 
-    /**
-     * מחזיר את הצבע המתאים לפס ההתקדמות לפי האחוז.
-     *   0-29%  → ורוד (רחוק מהיעד, צריך לדחוף)
-     *   30-69% → צהוב (באמצע הדרך)
-     *   70-99% → אינדיגו (כמעט שם!)
-     *   100%   → מנטה (הצלחה מלאה)
-     */
+    // צבע פס ההתקדמות לפי האחוז - מנטה ב-100%, אינדיגו ב-70+, וכו'
     @ColorRes
     private static int colorForPercent(int percent) {
         if (percent >= 100) return R.color.brand_mint;
@@ -95,7 +83,6 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.Progre
                     : 0;
 
             tvPercent.setText(percent + "%");
-            // טקסט סטטיסטיקה בעברית: "X מתוך Y ימים", או "🔥 רצף!" עבור 100%
             String statsText;
             if (percent >= 100 && totalDays > 0) {
                 statsText = String.format(Locale.getDefault(),
@@ -106,13 +93,10 @@ public class ProgressAdapter extends RecyclerView.Adapter<ProgressAdapter.Progre
             }
             tvStats.setText(statsText);
 
-            // אנימציית התקדמות חלקה (setProgressCompat עם animate=true)
             progressBar.setProgressCompat(percent, true);
 
-            // הגדרת צבע ה-indicator לפי האחוז
             int indicatorColor = ContextCompat.getColor(context, colorForPercent(percent));
             progressBar.setIndicatorColor(indicatorColor);
-            // שינוי גם של צבע האחוז כדי לתת לזה דגש
             tvPercent.setTextColor(indicatorColor);
         }
     }

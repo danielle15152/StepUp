@@ -25,15 +25,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 
-/**
- * Adapter של רשימת המטרות.
- *
- * הקסם של העיצוב החדש קורה ב-onBindViewHolder:
- * כל כרטיסייה מקבלת רקע, אייקון ופורמט שמשלבים את שלושת הקריטריונים -
- *   1) שעת התזכורת (או מבוסס-מיקום)  → קובע את הגרדיאנט
- *   2) קטגוריית המטרה               → קובע את האייקון הדקורטיבי
- *   3) notificationType (GENTLE/TOUGH) → קובע את צורת הכרטיסייה
- */
+// ה-Adapter שמזין את ה-RecyclerView של רשימת המטרות במסך הבית.
+// כל כרטיסייה מקבלת צבע לפי הקטגוריה ועוצמה לפי TOUGH/GENTLE.
 public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHolder> {
 
     public interface GoalActionsListener {
@@ -46,8 +39,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
     private final GoalActionsListener listener;
     private final Dao dao;
 
-    // ===== קבועי טקסט בעברית =====
-    // ימי השבוע בעברית - 7 ימים. אינדקס 0=ראשון לפי הקונבנציה של המערכת.
+    // ימי השבוע בעברית. אינדקס 0=ראשון
     private static final String[] DAYS_HE = {"א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"};
 
     public GoalsAdapter(GoalActionsListener listener, Dao dao) {
@@ -77,29 +69,16 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
                 && reminder.latitude != null
                 && reminder.longitude != null;
 
-        // ============================================
-        // שכבה 1: צורת הכרטיסייה - זהה ל-GENTLE ול-TOUGH
-        // (הבדל בין השניים יבוא רק דרך הצבע - ראי setupIcons למטה).
-        // ============================================
+        // צורת הכרטיסייה זהה ב-GENTLE וב-TOUGH. רק הצבע משתנה ביניהם.
         h.cardGoal.setRadius(dpToPx(context, 24));
         h.cardGoal.setStrokeWidth(0);
         h.cardGoal.setCardElevation(dpToPx(context, 4f));
 
-        // ============================================
-        // שכבה 2: רקע הכרטיסייה - גרדיאנט דינמי לפי קטגוריה + isTough
-        // הצבעים נקבעים בתוך setupIcons (אחרי טעינת שם הקטגוריה מ-DB)
-        // הטקסטים תמיד לבנים בזכות ה-scrim שב-XML.
-        // ============================================
         boolean isTough = "TOUGH".equalsIgnoreCase(gwr.goal.notificationType);
 
-        // ============================================
-        // התוכן: שם המטרה
-        // ============================================
         h.tvGoalName.setText(safe(gwr.goal.name));
 
-        // ============================================
-        // התוכן: תווית עליונה ("07:30 · GENTLE" או "📍 LOCATION · TOUGH")
-        // ============================================
+        // התווית העליונה משלבת שעה (או "LOCATION") עם סגנון ההתראה
         String styleLabel = isTough ? "TOUGH" : "GENTLE";
         String topLabel;
         if (isLocationBased) {
@@ -111,9 +90,6 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         }
         h.tvLabel.setText(topLabel);
 
-        // ============================================
-        // התוכן: ימי השבוע + מידע נוסף (שעה/מיקום)
-        // ============================================
         if (reminder != null && reminder.days != null && !reminder.days.isEmpty()) {
             h.tvReminderDays.setText(formatDaysHebrew(reminder.days));
             h.tvReminderDays.setVisibility(View.VISIBLE);
@@ -121,9 +97,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
             h.tvReminderDays.setVisibility(View.GONE);
         }
 
-        // ה-drawables (clock/pin) כבר לבן ב-vector שלהם, לכן אין צורך ב-tint.
         if (isLocationBased) {
-            // עדיפות: שם מיקום קריא; fallback: קואורדינטות.
+            // מעדיפים להציג שם מקום (אם נשמר), אחרת קואורדינטות
             String locText;
             if (reminder.locationName != null && !reminder.locationName.isEmpty()) {
                 locText = reminder.locationName;
@@ -144,16 +119,9 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
             h.tvReminderSpecifics.setVisibility(View.GONE);
         }
 
-        // ============================================
-        // האייקונים: קטגוריה (בקדמה, קטן) + דקורציה (ברקע, גדול)
-        // אם isTough: אייקון הקטגוריה הקטן מוחלף בברק על רקע כתום
-        // (badge TOUGH). הקטגוריה עדיין נראית ברקע כדקורציה.
-        // ============================================
+        // טעינת הקטגוריה מ-DB וצביעת הכרטיסייה. רץ ב-background
         setupIcons(h, gwr.goal.categoryId, isLocationBased, isTough);
 
-        // ============================================
-        // Listeners
-        // ============================================
         h.cardGoal.setOnClickListener(v -> listener.onItemClicked(gwr));
         h.btnEdit.setOnClickListener(v -> listener.onEditClicked(gwr));
         h.btnDelete.setOnClickListener(v -> listener.onDeleteClicked(gwr));
@@ -164,19 +132,8 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         return items.size();
     }
 
-    // ====================================================================
-    // לוגיקה: בניית הרקע הצבעוני (גרדיאנט)
-    // ====================================================================
-
-    /**
-     * בונה גרדיאנט דינמי לפי הקטגוריה ומצב התראה.
-     *
-     * - GENTLE: גוון בהיר עד בינוני של צבע הקטגוריה
-     * - TOUGH: גוון כהה עד מאוד כהה של אותו צבע
-     *
-     * הקטגוריה היא ה"זהות" של הכרטיסייה (ניתן לזהות אותה מבט אחד),
-     * וה-TOUGH הוא ה"עוצמה" (כהה יותר).
-     */
+    // בונה גרדיאנט אלכסוני לכרטיסייה. הצבעים נבחרים לפי הקטגוריה,
+    // ו-TOUGH מקבל גרסה כהה משמעותית של אותה משפחת צבעים.
     static GradientDrawable buildCardGradient(Context ctx, String categoryName,
                                               boolean isTough, float cornerRadiusDp) {
         int[] colors = colorsForCategory(categoryName, isTough);
@@ -186,50 +143,31 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         return gd;
     }
 
-    /**
-     * מחזיר את 2 הצבעים (start, end) של הגרדיאנט עבור קטגוריה ומצב נתון.
-     * הסדר: בהיר → כהה (אלכסון מהפינה השמאלית-עליונה לפינה הימנית-תחתונה).
-     */
+    // מחזיר זוג צבעים (start, end) של הגרדיאנט לכל קומבינציה של קטגוריה ו-isTough
     public static int[] colorsForCategory(String categoryName, boolean isTough) {
         if (categoryName == null) categoryName = "health";
         switch (categoryName.toLowerCase(Locale.ROOT)) {
             case "education":
-                // אינדיגו - חינוך/ידע
                 return isTough
-                        ? new int[]{0xFF4338CA, 0xFF1E1B4B}   // אינדיגו עמוק → כמעט שחור-סגול
-                        : new int[]{0xFF818CF8, 0xFF6366F1};  // אינדיגו בהיר → אינדיגו רגיל
+                        ? new int[]{0xFF4338CA, 0xFF1E1B4B}   // אינדיגו עמוק
+                        : new int[]{0xFF818CF8, 0xFF6366F1};  // אינדיגו רגיל
             case "sports":
-                // מנטה/טורקיז - ספורט/אנרגיה
                 return isTough
-                        ? new int[]{0xFF0F766E, 0xFF042F2E}   // טורקיז כהה → שחור-ירוק
-                        : new int[]{0xFF5EEAD4, 0xFF14B8A6};  // טורקיז בהיר → טורקיז רגיל
+                        ? new int[]{0xFF0F766E, 0xFF042F2E}   // טורקיז כהה
+                        : new int[]{0xFF5EEAD4, 0xFF14B8A6};  // מנטה
             case "finance":
-                // זהב/כתום - פיננסים
                 return isTough
-                        ? new int[]{0xFFB45309, 0xFF451A03}   // כתום-חום עמוק → חום שוקולד
-                        : new int[]{0xFFFCD34D, 0xFFF59E0B};  // זהב → כתום-זהב
+                        ? new int[]{0xFFB45309, 0xFF451A03}   // חום-שוקולד
+                        : new int[]{0xFFFCD34D, 0xFFF59E0B};  // זהב
             default:
-                // health (ברירת מחדל) - ורוד
                 return isTough
-                        ? new int[]{0xFFBE185D, 0xFF500724}   // ורוד עמוק → אדום-יין
-                        : new int[]{0xFFF472B6, 0xFFDB2777};  // ורוד בהיר → ורוד עמוק
+                        ? new int[]{0xFFBE185D, 0xFF500724}   // אדום-יין
+                        : new int[]{0xFFF472B6, 0xFFDB2777};  // ורוד
         }
     }
 
-    // ====================================================================
-    // לוגיקה: בחירת האייקונים
-    // ====================================================================
-
-    /**
-     * מגדיר את הצבע של הכרטיסייה ואת שני האייקונים:
-     *  - cardBackground: גרדיאנט דינמי לפי קטגוריה + isTough
-     *  - ivCategoryIcon: אייקון הקטגוריה (תמיד - גם ב-TOUGH).
-     *  - ivDecoration:    אייקון גדול חצי-שקוף ברקע. הקטגוריה,
-     *                     או סיכת מיקום אם זו תזכורת-מיקום.
-     *
-     * זה ירוץ ב-background thread כי הקטגוריה חיה ב-DB,
-     * אבל ה-UI updates מתבצעים ב-main thread דרך post().
-     */
+    // טוען את שם הקטגוריה מ-DB ואז מצייר את הצבעים והאייקונים.
+    // הקריאה ל-DB ב-Executor כי אסורה גישה ל-DB מה-Main Thread.
     private void setupIcons(GoalsViewHolder h, long categoryId,
                             boolean isLocationBased, boolean isTough) {
         Context ctx = h.itemView.getContext();
@@ -242,42 +180,33 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
                     case "education": categoryIcon = R.drawable.ic_category_education; break;
                     case "sports":    categoryIcon = R.drawable.ic_category_sports;    break;
                     case "finance":   categoryIcon = R.drawable.ic_category_finance;   break;
-                    // ברירת מחדל: health
                 }
             }
             final int finalCategoryIcon = categoryIcon;
             final String finalCategoryName = categoryName;
 
-            // עדכון UI ב-Main thread
             h.ivCategoryIcon.post(() -> {
-                // אייקון הקטגוריה - תמיד מציג את הקטגוריה האמיתית
                 h.ivCategoryIcon.setImageResource(finalCategoryIcon);
                 h.ivCategoryIcon.setBackgroundResource(R.drawable.bg_category_chip);
 
-                // הרקע הצבעוני - גרדיאנט דינמי לפי קטגוריה ו-isTough
                 h.cardBackground.setBackground(
                         buildCardGradient(ctx, finalCategoryName, isTough, 24f));
 
-                // אייקון הדקורציה הגדול ברקע
+                // אם זו מטרת מיקום - האייקון הגדול ברקע הוא סיכה.
+                // אחרת - אייקון הקטגוריה (גם הוא מופיע בקדמה, אבל ברקע הוא חצי-שקוף).
                 h.ivDecoration.setImageResource(
                         isLocationBased ? R.drawable.ic_decor_pin : finalCategoryIcon);
             });
         });
     }
 
-    // ====================================================================
-    // עזרים: פורמט טקסט
-    // ====================================================================
-
     private static String safe(String s) { return (s == null) ? "" : s; }
 
-    /**
-     * ממיר רשימת ימי שבוע (0=ראשון..6=שבת) למחרוזת עברית קצרה.
-     */
+    // מקבל רשימת מספרים (0=ראשון..6=שבת) ומחזיר מחרוזת כמו "ב׳, ד׳, ו׳".
+    // אם כל הימים נבחרו - מציג "כל יום" במקום הרשימה המלאה.
     private static String formatDaysHebrew(List<Integer> days) {
         if (days == null || days.isEmpty()) return "";
         days.sort(Integer::compareTo);
-        // כל הימים = "כל יום"
         if (days.size() == 7) return "כל יום";
         StringBuilder sb = new StringBuilder();
         for (int d : days) {
@@ -287,9 +216,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         return sb.toString();
     }
 
-    /**
-     * ממיר מספר דקות מתחילת היום ל-"HH:MM".
-     */
+    // מספר דקות מתחילת היום (480) -> "08:00"
     private static String formatMinuteOfDay(Integer minuteOfDay) {
         if (minuteOfDay == null) return "";
         int h = Math.max(0, minuteOfDay) / 60;
@@ -297,13 +224,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
         return String.format(Locale.US, "%02d:%02d", h, m);
     }
 
-    // ====================================================================
-    // עזרים: מתמטיקה של גרפיקה
-    // ====================================================================
-
-    /**
-     * המרת dp ל-pixels. צריך כי MaterialCardView מצפה לערכים בפיקסלים.
-     */
+    // המרת dp לפיקסלים - צריך כי כל המידות בקוד מחושבות בפיקסלים פיזיים
     private static float dpToPx(Context context, float dp) {
         return TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
@@ -311,12 +232,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
                 context.getResources().getDisplayMetrics());
     }
 
-    // ====================================================================
-    // ViewHolder
-    // ====================================================================
-
     static class GoalsViewHolder extends RecyclerView.ViewHolder {
-        // הוספתי את כל הרכיבים מה-XML החדש.
         final MaterialCardView cardGoal;
         final FrameLayout cardBackground;
         final ImageView ivDecoration;

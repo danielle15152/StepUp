@@ -39,19 +39,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 
-/**
- * טופס יצירה/עריכה של מטרה.
- *
- * שינויים מהגרסה הישנה:
- *  - Spinner קטגוריה הוחלף ב-ChipGroup דינמי (chips נוצרים מהקטגוריות ב-DB)
- *  - RadioGroup של סגנון התראה הוחלף ב-2 MaterialCardView קליקאביליות
- *    (cardGentle/cardTough) עם אייקון, כותרת ותיאור
- *  - RadioGroup של סוג תזכורת הוחלף ב-2 MaterialCardView קליקאביליות
- *    (cardTime/cardLocation)
- *  - EditText הוחלפו ב-TextInputEditText (לכן זה Material3)
- *  - Button הוחלפו ב-MaterialButton
- *  - הטופס מסתיר את ה-Toolbar של GoalsActivity ב-onResume
- */
 public class EditGoalFragment extends Fragment {
 
     private static final String ARG_GOAL_ID = "goal_id";
@@ -69,7 +56,6 @@ public class EditGoalFragment extends Fragment {
     private GoalWithReminder currentGoalWithReminder;
     private GeofenceHelper geofenceHelper;
 
-    // UI Components
     private EditText etName, etDescription;
     private ChipGroup cgCategory;
     private MaterialCardView cardGentle, cardTough;
@@ -80,20 +66,16 @@ public class EditGoalFragment extends Fragment {
     private TextView tvSelectedLocation;
     private LinearLayout timeReminderLayout, locationReminderLayout;
 
-    // מצב הבחירה הנוכחי (true=Tough, false=Gentle ; true=Time, false=Location)
     private boolean isTough = false;
     private boolean isTimeReminder = true;
 
     private List<Category> categoriesList = new ArrayList<>();
-    // נשמר את ה-id של הקטגוריה הנבחרת כדי לשרוד recreate של chips
     private Long selectedCategoryId = null;
 
     private Integer selectedHour = 8;
     private Integer selectedMinute = 0;
     private Double selectedLatitude = null;
     private Double selectedLongitude = null;
-    // שם מיקום קריא (לדוגמה "הרצל 12, רמת גן"). יכול להיות null אם
-    // ה-reverse geocoding נכשל.
     private String selectedLocationName = null;
 
     private ActivityResultLauncher<Intent> mapPickerLauncher;
@@ -109,8 +91,6 @@ public class EditGoalFragment extends Fragment {
                         Intent data = result.getData();
                         selectedLatitude = data.getDoubleExtra(MapPickerActivity.EXTRA_LATITUDE, 0);
                         selectedLongitude = data.getDoubleExtra(MapPickerActivity.EXTRA_LONGITUDE, 0);
-                        // השם נקבע ב-MapPickerActivity דרך reverse geocoding.
-                        // יכול להיות null אם ה-geocoding נכשל.
                         selectedLocationName = data.getStringExtra(MapPickerActivity.EXTRA_LOCATION_NAME);
                         updateLocationText();
                     }
@@ -136,11 +116,7 @@ public class EditGoalFragment extends Fragment {
         loadCategories();
     }
 
-    /**
-     * מסתירים את ה-Toolbar של GoalsActivity כשנכנסים למסך עריכה,
-     * כי יש לטופס header משלו (✕ + "מטרה חדשה" + שמירה).
-     * בלי זה היה לנו שני "headers" אחד מעל השני.
-     */
+    // לטופס יש header משלו, אז מסתירים את ה-Toolbar של GoalsActivity
     @Override
     public void onResume() {
         super.onResume();
@@ -150,9 +126,6 @@ public class EditGoalFragment extends Fragment {
         }
     }
 
-    /**
-     * מחזירים את ה-Toolbar כשמתנתקים מהמסך (מעבר חזרה ל-Home).
-     */
     @Override
     public void onPause() {
         super.onPause();
@@ -187,7 +160,6 @@ public class EditGoalFragment extends Fragment {
     private void setupListeners() {
         View root = requireView();
 
-        // כפתורי שמירה וביטול - הן בראש (X + Save Top) והן בתחתית
         ImageButton btnCancel = root.findViewById(R.id.btnCancel);
         btnCancel.setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
@@ -197,33 +169,23 @@ public class EditGoalFragment extends Fragment {
         tvTimePicker.setOnClickListener(v -> showTimePickerDialog());
         btnSelectLocation.setOnClickListener(v -> selectLocation());
 
-        // לחיצה על כרטיסיית סגנון התראה (Gentle/Tough)
         cardGentle.setOnClickListener(v -> selectNotificationStyle(false));
         cardTough.setOnClickListener(v -> selectNotificationStyle(true));
 
-        // לחיצה על כרטיסיית סוג תזכורת (Time/Location)
         cardTime.setOnClickListener(v -> selectReminderType(true));
         cardLocation.setOnClickListener(v -> selectReminderType(false));
     }
 
-    /**
-     * מטפל בבחירה של סגנון התראה - מסמן את הכרטיסייה הנבחרת
-     * עם stroke אינדיגו עבה ורקע אינדיגו עדין, ומנקה את האחרת.
-     */
     private void selectNotificationStyle(boolean tough) {
         isTough = tough;
         updateChoiceCard(cardGentle, !tough);
         updateChoiceCard(cardTough, tough);
     }
 
-    /**
-     * מטפל בבחירה של סוג תזכורת - גם מחליף את התצוגה בין שעה למיקום.
-     */
     private void selectReminderType(boolean time) {
         isTimeReminder = time;
         updateChoiceCard(cardTime, time);
         updateChoiceCard(cardLocation, !time);
-        // עדכון התצוגה והניקוי של הערכים הלא רלוונטיים
         if (time) {
             timeReminderLayout.setVisibility(View.VISIBLE);
             locationReminderLayout.setVisibility(View.GONE);
@@ -233,22 +195,15 @@ public class EditGoalFragment extends Fragment {
         } else {
             timeReminderLayout.setVisibility(View.GONE);
             locationReminderLayout.setVisibility(View.VISIBLE);
-            // לא מאפסים את השעה כדי שלא לאבד את הבחירה אם המשתמש מחליף הלוך וחזור
         }
     }
 
-    /**
-     * משנה את ה-stroke/רקע של כרטיסיית בחירה כדי לסמן selected/unselected.
-     * נבחר: stroke אינדיגו 2dp + רקע אינדיגו 12% שקיפות.
-     * לא נבחר: stroke ברירת מחדל + רקע surface.
-     */
     private void updateChoiceCard(MaterialCardView card, boolean selected) {
         if (selected) {
             card.setStrokeColor(getResources().getColor(R.color.brand_indigo, null));
             card.setStrokeWidth((int) (2 * getResources().getDisplayMetrics().density));
-            card.setCardBackgroundColor(0x1F6366F1); // אינדיגו עם 12% שקיפות
+            card.setCardBackgroundColor(0x1F6366F1);
         } else {
-            // החזרת ערכי ברירת המחדל
             int outlineColor = resolveThemeColor(com.google.android.material.R.attr.colorOutline);
             card.setStrokeColor(outlineColor);
             card.setStrokeWidth((int) (1 * getResources().getDisplayMetrics().density));
@@ -257,10 +212,6 @@ public class EditGoalFragment extends Fragment {
         }
     }
 
-    /**
-     * עזר: מקבל theme attribute (כמו colorSurface) ומחזיר את הצבע המתאים
-     * לפי התמה הנוכחית (light/dark).
-     */
     private int resolveThemeColor(int attrId) {
         android.util.TypedValue tv = new android.util.TypedValue();
         requireContext().getTheme().resolveAttribute(attrId, tv, true);
@@ -277,7 +228,6 @@ public class EditGoalFragment extends Fragment {
             tvSelectedLocation.setText(R.string.edit_goal_no_location_selected);
             return;
         }
-        // עדיפות לשם המיקום הקריא, ו-fallback לקואורדינטות
         if (selectedLocationName != null && !selectedLocationName.isEmpty()) {
             tvSelectedLocation.setText("📍 " + selectedLocationName);
         } else {
@@ -310,9 +260,6 @@ public class EditGoalFragment extends Fragment {
         }
     }
 
-    /**
-     * טוען את הקטגוריות מ-DB ובונה chips דינמיים ב-cgCategory.
-     */
     private void loadCategories() {
         Executors.newSingleThreadExecutor().execute(() -> {
             List<Category> loaded = dao.getAllCategories();
@@ -326,29 +273,21 @@ public class EditGoalFragment extends Fragment {
         });
     }
 
-    /**
-     * בונה chip לכל קטגוריה ב-cgCategory. שומר על ה-id של הקטגוריה
-     * בתור tag של ה-Chip כדי לקרוא אותו בשמירה.
-     */
     private void buildCategoryChips() {
         cgCategory.removeAllViews();
         for (Category category : categoriesList) {
             Chip chip = new Chip(requireContext());
             chip.setText(translateCategoryToHebrew(category.name));
             chip.setCheckable(true);
-            chip.setTag(category.id);   // שמירת ה-id כדי לאחזר אותו ב-saveGoal
+            chip.setTag(category.id);
             cgCategory.addView(chip);
         }
-        // בחירה דיפולטית של הראשונה אם אין בחירה קודמת
         if (cgCategory.getChildCount() > 0 && cgCategory.getCheckedChipId() == View.NO_ID) {
             ((Chip) cgCategory.getChildAt(0)).setChecked(true);
             if (!categoriesList.isEmpty()) selectedCategoryId = categoriesList.get(0).id;
         }
     }
 
-    /**
-     * תרגום שם קטגוריה לעברית (לתצוגה ב-chip).
-     */
     private static String translateCategoryToHebrew(String englishName) {
         if (englishName == null) return "";
         switch (englishName.toLowerCase(Locale.ROOT)) {
@@ -362,12 +301,12 @@ public class EditGoalFragment extends Fragment {
 
     private void loadGoalAndReminder() {
         if (goalId == -1) {
-            // מצב יצירת מטרה חדשה - ברירת מחדל: עדין + לפי שעה
+            // ברירת מחדל למטרה חדשה: עדינה + לפי שעה
             currentGoalWithReminder = new GoalWithReminder();
             currentGoalWithReminder.goal = new Goal();
             currentGoalWithReminder.reminder = new Reminder();
-            selectNotificationStyle(false);  // Gentle
-            selectReminderType(true);        // Time
+            selectNotificationStyle(false);
+            selectReminderType(true);
             return;
         }
 
@@ -386,14 +325,11 @@ public class EditGoalFragment extends Fragment {
         etName.setText(g.name);
         etDescription.setText(g.description);
 
-        // סימון הקטגוריה הקיימת
         selectedCategoryId = g.categoryId;
         markCategoryChip(g.categoryId);
 
-        // סימון סגנון התראה לפי הערך השמור
         selectNotificationStyle("TOUGH".equalsIgnoreCase(g.notificationType));
 
-        // טיפול ב-reminder
         if (currentGoalWithReminder.reminder != null) {
             Reminder r = currentGoalWithReminder.reminder;
             updateSelectedDays(r.days);
@@ -401,14 +337,14 @@ public class EditGoalFragment extends Fragment {
             if (r.latitude != null && r.longitude != null) {
                 selectedLatitude = r.latitude;
                 selectedLongitude = r.longitude;
-                selectedLocationName = r.locationName;  // טעינת השם השמור
-                selectReminderType(false);  // Location
+                selectedLocationName = r.locationName;
+                selectReminderType(false);
             } else if (r.minuteOfDay != null) {
                 selectedHour = r.minuteOfDay / 60;
                 selectedMinute = r.minuteOfDay % 60;
-                selectReminderType(true);   // Time
+                selectReminderType(true);
             } else {
-                selectReminderType(true);   // ברירת מחדל
+                selectReminderType(true);
             }
             updateLocationText();
             updateTimeText();
@@ -417,9 +353,6 @@ public class EditGoalFragment extends Fragment {
         }
     }
 
-    /**
-     * סימון ה-chip של הקטגוריה לפי ה-id (שנשמר ב-tag).
-     */
     private void markCategoryChip(long categoryId) {
         for (int i = 0; i < cgCategory.getChildCount(); i++) {
             Chip chip = (Chip) cgCategory.getChildAt(i);
@@ -446,9 +379,6 @@ public class EditGoalFragment extends Fragment {
         return selected;
     }
 
-    /**
-     * שולף את ה-id של הקטגוריה הנבחרת מתוך ה-chip שמסומן.
-     */
     private long getSelectedCategoryId() {
         int checkedId = cgCategory.getCheckedChipId();
         if (checkedId == View.NO_ID) return -1;
@@ -461,29 +391,29 @@ public class EditGoalFragment extends Fragment {
     private void saveGoal() {
         String name = etName.getText().toString().trim();
         if (name.isEmpty()) {
-            etName.setError("יש להזין שם למטרה");
+            etName.setError(getString(R.string.error_goal_name_required));
             return;
         }
 
         long categoryId = getSelectedCategoryId();
         if (categoryId < 0) {
-            Toast.makeText(getContext(), "יש לבחור קטגוריה", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.error_category_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
         List<Integer> days = getSelectedDays();
         if (days.isEmpty()) {
-            Toast.makeText(getContext(), "יש לבחור לפחות יום אחד לתזכורת", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.error_days_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (isTimeReminder && (selectedHour == null || selectedMinute == null)) {
-            Toast.makeText(getContext(), "יש לבחור שעה לתזכורת", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.error_time_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!isTimeReminder && (selectedLatitude == null || selectedLongitude == null)) {
-            Toast.makeText(getContext(), "יש לבחור מיקום לתזכורת", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.error_location_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -500,7 +430,6 @@ public class EditGoalFragment extends Fragment {
                 ? (selectedHour * 60 + selectedMinute) : 0;
         currentGoalWithReminder.reminder.latitude = isTimeReminder ? null : selectedLatitude;
         currentGoalWithReminder.reminder.longitude = isTimeReminder ? null : selectedLongitude;
-        // שם המיקום נשמר רק לתזכורת מבוססת מיקום (יכול להיות null)
         currentGoalWithReminder.reminder.locationName = isTimeReminder ? null : selectedLocationName;
 
         Executors.newSingleThreadExecutor().execute(() -> {

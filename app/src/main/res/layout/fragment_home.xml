@@ -28,12 +28,12 @@
             android:layout_height="80dp"
             android:src="@android:drawable/ic_menu_add"
             app:tint="?android:attr/textColorSecondary"
-            android:contentDescription="Add your first goal"/>
+            android:contentDescription="@string/home_first_goal_cd"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Welcome to StepUp!"
+            android:text="@string/home_welcome_title"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp"/>
@@ -41,7 +41,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Your goals will appear here. Tap the '+' button to add your first one."
+            android:text="@string/home_empty_subtitle"
             android:gravity="center"
             android:layout_marginTop="8dp"
             android:textSize="16sp"/>
@@ -56,6 +56,6 @@
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
         app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
-        android:contentDescription="Add Goal"/>
+        android:contentDescription="@string/home_add_goal_cd"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

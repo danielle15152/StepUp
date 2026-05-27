@@ -27,23 +27,20 @@ public class NotificationScheduler {
     private static final String CHANNEL_ID = "stepup_goal_channel";
 
 
-    public static void showImmediateNotification(Context context, Goal goal) { // Updated signature
+    public static void showImmediateNotification(Context context, Goal goal) {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        String title;
+        String title = goal.name;
         String message;
-
         if ("TOUGH".equals(goal.notificationType)) {
-            title = goal.name; // Keep title as goal name for TOUGH
-            message = "No excuses. It's time to work on your goal!";
-        } else { // GENTLE or any other type
-            title = goal.name; // Keep title as goal name for GENTLE
-            message = "A small step today leads to a big success tomorrow. You can do it!";
+            message = context.getString(R.string.notification_message_tough);
+        } else {
+            message = context.getString(R.string.notification_message_gentle);
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "StepUp Goal Reminders";
-            String description = "Channel for all StepUp goal reminder notifications";
+            CharSequence name = context.getString(R.string.notification_channel_name);
+            String description = context.getString(R.string.notification_channel_description);
             int importance = goal.notificationType.equals("TOUGH") ? NotificationManager.IMPORTANCE_HIGH : NotificationManager.IMPORTANCE_DEFAULT;
 
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
@@ -69,7 +66,6 @@ public class NotificationScheduler {
                 .setAutoCancel(true);
 
         notificationManager.notify(goal.id, builder.build());
-        Log.i(TAG, "Showing immediate notification for goal ID: " + goal.id);
     }
 
 
@@ -77,18 +73,13 @@ public class NotificationScheduler {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
         if (goal == null || reminder == null || reminder.days == null || reminder.days.isEmpty()) {
-            Log.w(TAG, "Aborting schedule. Goal, reminder, or days are null/empty.");
             return;
         }
 
         Calendar nextNotificationTime = getNextNotificationTime(reminder);
         if (nextNotificationTime == null) {
-            Log.w(TAG, "Aborting schedule. Could not calculate next notification time.");
             return;
         }
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Log.i(TAG, "Scheduling for goal ID " + goal.id + " at: " + sdf.format(nextNotificationTime.getTime()));
 
         Intent intent = new Intent(context, GoalNotificationReceiver.class);
         intent.putExtra("goal_id", (long)goal.id);
@@ -100,18 +91,14 @@ public class NotificationScheduler {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // Check for permission to schedule exact alarms
+        // אם אין הרשאה ל-exact alarm, נופלים ל-inexact
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            Log.w(TAG, "No exact alarm permission. Falling back to inexact alarm.");
-            // Fallback for devices that cannot schedule exact alarms
             alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     nextNotificationTime.getTimeInMillis(),
                     pendingIntent
             );
         } else {
-            // Schedule exact alarm for devices that have permission
-            Log.i(TAG, "Scheduling exact alarm.");
             alarmManager.setExactAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     nextNotificationTime.getTimeInMillis(),
@@ -121,7 +108,6 @@ public class NotificationScheduler {
     }
 
     public static void cancelNotification(Context context, Goal goal) {
-        Log.i(TAG, "Cancelling notification for goal ID " + goal.id);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, GoalNotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(

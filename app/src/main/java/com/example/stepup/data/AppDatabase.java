@@ -17,6 +17,7 @@ import com.example.stepup.data.entities.GoalSkip;
 import com.example.stepup.data.entities.Reminder;
 import com.example.stepup.data.converters.DaysListConverter;
 
+// בסיס הנתונים של האפליקציה. עובד עם Room - ה-ORM של אנדרואיד שעוטף את SQLite.
 @Database(
         entities = {Goal.class, Reminder.class, Category.class, GoalCompletion.class, GoalSkip.class},
         version = 10,
@@ -26,45 +27,33 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract Dao dao();
 
+    // משתמשים ב-Singleton כי פתיחת DB היא פעולה יקרה ויכולה לגרום לבעיות סנכרון
+    // אם נפתח את ה-DB ביותר ממקום אחד בו זמנית
     private static volatile AppDatabase INSTANCE;
 
-    /**
-     * Migration ידנית מגרסת DB 9 ל-10.
-     *
-     * השינוי היחיד: הוספת עמודת locationName ל-Reminder.
-     * זה שם המיקום הקריא (לדוגמה "הרצל 12, רמת גן"), שנקבע
-     * דרך reverse geocoding ב-MapPickerActivity.
-     *
-     * ALTER TABLE עם ADD COLUMN שומר על כל הנתונים הקיימים -
-     * רק העמודה החדשה תהיה NULL במטרות שנוצרו לפני העדכון.
-     *
-     * עטיפת try/catch מטפלת במקרה שהעמודה כבר קיימת (אם פעם הרצנו
-     * destructive migration לפני שכתבנו את ה-Migration הזה).
-     */
+    // Migration מגרסה 9 ל-10: הוספת עמודת locationName ל-Reminder (שם המקום הקריא,
+    // לדוגמה "הרצל 12, רמת גן"). ה-try/catch למקרה שכבר נעשה destructive migration קודם.
     static final Migration MIGRATION_9_10 = new Migration(9, 10) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase db) {
             try {
                 db.execSQL("ALTER TABLE Reminder ADD COLUMN locationName TEXT");
             } catch (Exception e) {
-                // העמודה כבר קיימת - בסדר, ממשיכים.
+                // העמודה כבר קיימת
             }
         }
     };
 
     public static AppDatabase getDatabase(final Context context) {
+        // Double-checked locking - בודקים פעמיים את INSTANCE עם synchronized באמצע,
+        // כדי שאם שני threads קוראים בו זמנית רק אחד יצור את ה-DB
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "stepup-db")
-                            // ה-Migration המסודר. רץ פעם אחת בלבד -
-                            // כשעוברים מגרסת DB 9 ל-10.
                             .addMigrations(MIGRATION_9_10)
-                            // safety net: אם משהו לא צפוי קורה (downgrade,
-                            // mismatch schema לא ידוע), נעדיף destructive
-                            // על קריסה. בייצור עדיף בלי, אבל לפרוייקט בית-ספרי
-                            // עדיף שזה לא יקרוס.
+                            // אם המשתמשת מתקינה גרסה ישנה יותר, נמחק את ה-DB במקום לקרוס
                             .fallbackToDestructiveMigrationOnDowngrade()
                             .build();
                 }

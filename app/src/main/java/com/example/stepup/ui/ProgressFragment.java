@@ -51,8 +51,6 @@ public class ProgressFragment extends Fragment {
 
         dao = AppDatabase.getDatabase(requireContext()).dao();
 
-        // ה-toolbar הוסר מה-XML בעקבות העיצוב החדש - יש כותרת בתוך ה-layout עצמו
-
         recyclerView = view.findViewById(R.id.rvProgress);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new ProgressAdapter();
@@ -165,7 +163,6 @@ public class ProgressFragment extends Fragment {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     adapter.setItems(goalProgressList);
-                    // הפעלת האנימציה של הפריטים מחדש
                     recyclerView.scheduleLayoutAnimation();
                 });
             }

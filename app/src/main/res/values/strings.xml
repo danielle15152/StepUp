@@ -99,5 +99,44 @@
     <!-- MAP                                                                   -->
     <!-- ==================================================================== -->
     <string name="map_search_hint">חיפוש מיקום</string>
+    <string name="map_confirm_location">אישור מיקום</string>
+    <string name="map_pick_location_title">בחירת מיקום</string>
+    <string name="map_select_on_map">יש לבחור מיקום על המפה</string>
+    <string name="map_location_not_found">המיקום לא נמצא</string>
+    <string name="map_search_error">שגיאה בחיפוש המיקום - בדקי את החיבור לאינטרנט</string>
+    <string name="map_selected_location_title">המיקום שנבחר</string>
+
+    <!-- ==================================================================== -->
+    <!-- NOTIFICATIONS - טקסטים שמופיעים בהתראות פוש                          -->
+    <!-- ==================================================================== -->
+    <string name="notification_channel_name">תזכורות מטרות StepUp</string>
+    <string name="notification_channel_description">ערוץ להתראות תזכורת על מטרות</string>
+    <string name="notification_message_gentle">צעד קטן היום מוביל להצלחה גדולה מחר. את יכולה!</string>
+    <string name="notification_message_tough">בלי תירוצים. הגיע הזמן לעבוד על המטרה שלך!</string>
+
+    <!-- ==================================================================== -->
+    <!-- DELETE GOAL DIALOG                                                    -->
+    <!-- ==================================================================== -->
+    <string name="delete_dialog_title">למחוק את המטרה?</string>
+    <string name="delete_dialog_message">האם את בטוחה שברצונך למחוק את \"%1$s\"? לא ניתן לשחזר.</string>
+    <string name="delete_dialog_message_generic">האם את בטוחה שברצונך למחוק את המטרה? לא ניתן לשחזר.</string>
+    <string name="action_delete">מחיקה</string>
+
+    <!-- ==================================================================== -->
+    <!-- EDIT GOAL - הודעות שגיאה                                             -->
+    <!-- ==================================================================== -->
+    <string name="error_goal_name_required">יש להזין שם למטרה</string>
+    <string name="error_category_required">יש לבחור קטגוריה</string>
+    <string name="error_days_required">יש לבחור לפחות יום אחד לתזכורת</string>
+    <string name="error_time_required">יש לבחור שעה לתזכורת</string>
+    <string name="error_location_required">יש לבחור מיקום לתזכורת</string>
+
+    <!-- ==================================================================== -->
+    <!-- CATEGORIES (שמות הקטגוריות בעברית)                                   -->
+    <!-- ==================================================================== -->
+    <string name="category_health">בריאות</string>
+    <string name="category_education">חינוך</string>
+    <string name="category_sports">ספורט</string>
+    <string name="category_finance">פיננסים</string>
 
 </resources>
