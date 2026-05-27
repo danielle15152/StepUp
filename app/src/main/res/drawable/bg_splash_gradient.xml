@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    גרדיאנט אנכי למסך הפתיחה: מנטה למעלה → אינדיגו באמצע → ink-900 למטה.
+    angle="270" אומר שהכיוון הוא מלמעלה למטה (0=שמאל-לימין, 90=למטה-למעלה, וכו').
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="270"
+        android:startColor="#14E0B1"
+        android:centerColor="#6366F1"
+        android:endColor="#0F1729" />
+</shape>

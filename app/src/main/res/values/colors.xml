@@ -1,11 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- ==================================================================== -->
+    <!-- BASIC COLORS                                                          -->
+    <!-- ==================================================================== -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
 
-    <!-- Category Colors -->
-    <color name="category_health">#FF6B6B</color> <!-- Light Coral -->
-    <color name="category_education">#4D96FF</color> <!-- Dodger Blue -->
-    <color name="category_sports">#4BC8A0</color> <!-- Medium Aquamarine -->
-    <color name="category_finance">#FFD166</color> <!-- Sunglow -->
+    <!-- ==================================================================== -->
+    <!-- BRAND PALETTE (Fresh & Playful)                                       -->
+    <!-- אלה הצבעים הראשיים של האפליקציה. כל מקום שמשתמש                       -->
+    <!-- ב"צבע ראשי" יקרא לאחד מאלה.                                          -->
+    <!-- ==================================================================== -->
+
+    <!-- Mint: צבע ההצלחה והאקסנט. משמש ל-FAB, להצלחות, ולגרדיאנט הראשי. -->
+    <color name="brand_mint">#14E0B1</color>
+    <color name="brand_mint_dark">#0EA88A</color>
+    <color name="brand_mint_light">#5FECC8</color>
+
+    <!-- Indigo: הצבע הראשי המסביר/הרציני. CTA buttons, headers, נושאי קישור. -->
+    <color name="brand_indigo">#6366F1</color>
+    <color name="brand_indigo_dark">#4F46E5</color>
+    <color name="brand_indigo_light">#8B8DF5</color>
+
+    <!-- Pink: הדגשות רגשיות, ספורט/בריאות, אקסנט חם. -->
+    <color name="brand_pink">#F472B6</color>
+    <color name="brand_pink_dark">#DB2777</color>
+
+    <!-- Sun: אזהרות עדינות, "צריך תשומת לב", כתרים ותגי הישג. -->
+    <color name="brand_sun">#FCD34D</color>
+    <color name="brand_sun_dark">#F59E0B</color>
+
+    <!-- ==================================================================== -->
+    <!-- NEUTRAL SURFACES                                                      -->
+    <!-- אלה הצבעים של הרקעים והטקסטים. הם משתנים בין מצב יום למצב לילה        -->
+    <!-- דרך values-night/themes.xml.                                          -->
+    <!-- ==================================================================== -->
+
+    <!-- Ink = הטון הכהה (משמש כרקע במצב כהה, כטקסט במצב בהיר) -->
+    <color name="ink_900">#0F1729</color>
+    <color name="ink_800">#1E293B</color>
+    <color name="ink_700">#334155</color>
+    <color name="ink_500">#64748B</color>
+    <color name="ink_400">#94A3B8</color>
+
+    <!-- Cloud = הטון הבהיר (משמש כרקע במצב בהיר) -->
+    <color name="cloud_50">#F8FAFC</color>
+    <color name="cloud_100">#F1F5F9</color>
+    <color name="cloud_200">#E2E8F0</color>
+
+    <!-- ==================================================================== -->
+    <!-- CATEGORY COLORS                                                       -->
+    <!-- צבע יחודי לכל קטגוריה. בשימוש באייקון הקטגוריה ובתוויות.              -->
+    <!-- ==================================================================== -->
+    <color name="category_health">#F472B6</color>      <!-- ורוד - בריאות / לב -->
+    <color name="category_education">#6366F1</color>   <!-- אינדיגו - חינוך / ידע -->
+    <color name="category_sports">#14E0B1</color>      <!-- מנטה - ספורט / אנרגיה -->
+    <color name="category_finance">#FCD34D</color>     <!-- צהוב - פיננסים / זהב -->
+
+    <!-- ==================================================================== -->
+    <!-- TIME-OF-DAY GRADIENT STOPS                                            -->
+    <!-- אלה הצבעים שמרכיבים את הרקע של כרטיסיית מטרה לפי שעת התזכורת.         -->
+    <!-- כל גרדיאנט בנוי מ-startColor → endColor.                              -->
+    <!-- ==================================================================== -->
+
+    <!-- בוקר (06:00-11:00): שמש זורחת — צהוב→ורוד -->
+    <color name="gradient_morning_start">#FCD34D</color>
+    <color name="gradient_morning_end">#F472B6</color>
+
+    <!-- צהריים (11:00-16:00): שמיים בהירים — מנטה→תכלת -->
+    <color name="gradient_noon_start">#14E0B1</color>
+    <color name="gradient_noon_end">#0EA5E9</color>
+
+    <!-- ערב (16:00-20:00): שקיעה — ורוד→כתום -->
+    <color name="gradient_evening_start">#F472B6</color>
+    <color name="gradient_evening_end">#FB923C</color>
+
+    <!-- לילה (20:00-06:00): שמי לילה — אינדיגו→שחור -->
+    <color name="gradient_night_start">#6366F1</color>
+    <color name="gradient_night_end">#0F1729</color>
+
+    <!-- מבוסס מיקום: מפה — מנטה→תכלת (דומה ל"צהריים" כי זה הגיוני בהקשר) -->
+    <color name="gradient_location_start">#14E0B1</color>
+    <color name="gradient_location_end">#0EA5E9</color>
+
+    <!-- ==================================================================== -->
+    <!-- TEXT ON GRADIENT BACKGROUNDS                                          -->
+    <!-- צבעי טקסט להצבה על הגרדיאנטים. הטקסט תמיד צריך להיות הגוון הכהה       -->
+    <!-- ביותר של הצבע השליט בגרדיאנט כדי לשמור על קריאות וניגודיות.            -->
+    <!-- ==================================================================== -->
+    <color name="text_on_warm">#4A1B0C</color>   <!-- חום-שוקולד - לבוקר/ערב -->
+    <color name="text_on_cool">#04342C</color>   <!-- ירוק כהה מאוד - לצהריים/מיקום -->
+    <color name="text_on_dark">#FFFFFFFF</color> <!-- לבן - ללילה -->
+
+    <!-- ==================================================================== -->
+    <!-- SEMANTIC COLORS                                                       -->
+    <!-- צבעים עם משמעות. שגיאות, אזהרות, הצלחות.                              -->
+    <!-- ==================================================================== -->
+    <color name="status_success">#14E0B1</color>
+    <color name="status_warning">#FCD34D</color>
+    <color name="status_error">#EF4444</color>
+    <color name="status_info">#6366F1</color>
+
 </resources>

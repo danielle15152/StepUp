@@ -13,12 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stepup.R;
-import com.example.stepup.GoalsActivity; // Added import for GoalsActivity
 import com.example.stepup.data.AppDatabase;
 import com.example.stepup.data.Dao;
 import com.example.stepup.data.model.GoalProgress;
 import com.example.stepup.data.model.GoalProgressStats;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.chip.ChipGroup;
 
 import java.text.ParseException;
@@ -40,7 +38,6 @@ public class ProgressFragment extends Fragment {
     private ProgressAdapter adapter;
     private RecyclerView recyclerView;
     private ChipGroup chipGroupDateRange;
-    private MaterialToolbar toolbar;
 
     @Nullable
     @Override
@@ -54,8 +51,7 @@ public class ProgressFragment extends Fragment {
 
         dao = AppDatabase.getDatabase(requireContext()).dao();
 
-        toolbar = view.findViewById(R.id.toolbar);
-        setupToolbar();
+        // ה-toolbar הוסר מה-XML בעקבות העיצוב החדש - יש כותרת בתוך ה-layout עצמו
 
         recyclerView = view.findViewById(R.id.rvProgress);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -80,13 +76,6 @@ public class ProgressFragment extends Fragment {
 
         chipGroupDateRange.check(R.id.chip_week);
         loadProgressForDateRange(DateRange.WEEK);
-    }
-
-    private void setupToolbar() {
-        if (getActivity() instanceof GoalsActivity) {
-            ((GoalsActivity) getActivity()).setSupportActionBar(toolbar);
-            ((GoalsActivity) getActivity()).getSupportActionBar().setTitle("Progress Report");
-        }
     }
 
     private void loadProgressForDateRange(DateRange range) {
@@ -176,6 +165,8 @@ public class ProgressFragment extends Fragment {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     adapter.setItems(goalProgressList);
+                    // הפעלת האנימציה של הפריטים מחדש
+                    recyclerView.scheduleLayoutAnimation();
                 });
             }
         });

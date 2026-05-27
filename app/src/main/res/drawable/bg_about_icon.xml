@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    רקע לאייקון של "אודות" בסקציית ההגדרות.
+    ריבוע עם פינות מעוגלות והגרדיאנט של המותג.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="135"
+        android:startColor="#14E0B1"
+        android:endColor="#6366F1" />
+    <corners android:radius="12dp" />
+</shape>

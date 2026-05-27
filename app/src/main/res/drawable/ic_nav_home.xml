@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- אייקון "בית" - גג ובסיס פשוטים, סטייל Material Symbols outlined -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M12,3 L4,9 V20 H10 V14 H14 V20 H20 V9 L12,3 Z M18,18 H16 V12 H8 V18 H6 V10 L12,5.5 L18,10 V18 Z" />
+</vector>

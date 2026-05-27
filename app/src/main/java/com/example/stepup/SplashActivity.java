@@ -2,21 +2,20 @@ package com.example.stepup;
 //המסך פתיחה של האפליקציה
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -33,12 +32,25 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // החלת ערכת הנושא השמורה לפני setContentView, כדי שהמסך
+        // ייטען מיד עם הצבעים הנכונים (ללא הבהוב).
+        applyStoredThemeMode();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
         // יצירת ערוץ התראות ובקשת הרשאה מהמשתמש
         createNotificationChannel();
         askForNotificationPermission();
+    }
+
+    /**
+     * קורא את ערכת הנושא השמורה מ-SharedPreferences ומיישם אותה.
+     * אם אין ערך שמור - ברירת המחדל היא "לפי המכשיר".
+     */
+    private void applyStoredThemeMode() {
+        SharedPreferences prefs = getSharedPreferences("StepUpPrefs", Context.MODE_PRIVATE);
+        int themeMode = prefs.getInt("theme_mode", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        AppCompatDelegate.setDefaultNightMode(themeMode);
     }
 
     // פונקציה שממשיכה לפתיחת האפליקציה אחרי שהטיפול בהרשאות הסתיים
@@ -57,7 +69,7 @@ public class SplashActivity extends AppCompatActivity {
 
     // פונקציה שיוצרת את ערוץ ההתראות של האפליקציה
     private void createNotificationChannel() {
-        // ערוצי התראות נדרשים רק בגרסאות אנדרואיד 8 (API 26) ומעלה
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name); // צריך להוסיף את הטקסט לקבצי התרגום
             String description = getString(R.string.channel_description); // צריך להוסיף את הטקסט לקבצי התרגום

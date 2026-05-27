@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    אנימציית כניסה לפריט בודד ב-RecyclerView.
+    שני אפקטים יחד:
+      1) alpha 0→1 (fade-in) — הפריט "מופיע" באוויר במקום פשוט להיכנס
+      2) translateY 20% → 0 — הפריט בא מעט מלמעלה, יוצר תחושת "נפילה רכה"
+    משך: 350ms עם decelerate_interpolator (מתחיל מהר, מאט בסוף).
+-->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator"
+    android:duration="350">
+
+    <alpha
+        android:fromAlpha="0"
+        android:toAlpha="1" />
+
+    <translate
+        android:fromYDelta="-20%"
+        android:toYDelta="0" />
+
+</set>

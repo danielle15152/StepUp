@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    עיגול חצי-שקוף שמכיל את הלוגו במסך הפתיחה.
+    הצבע #26FFFFFF הוא לבן בשקיפות 15% (26 בהקסה = ~15%).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#26FFFFFF" />
+    <corners android:radius="28dp" />
+</shape>

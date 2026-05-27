@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    מסך המפה הראשי (מתפריט הניווט).
+    מציג מפה עם search bar צף בחלק העליון.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,14 +15,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <SearchView
-        android:id="@+id/searchView"
+    <!--
+        SearchView מעוצב - כרטיסייה לבנה עם פינות גדולות וצל,
+        צפה מעל המפה.
+    -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:queryHint="Search for a location"
-        android:iconifiedByDefault="false"
-        android:background="@android:color/white"
-        android:elevation="5dp" />
+        app:cardCornerRadius="28dp"
+        app:cardElevation="6dp"
+        app:cardBackgroundColor="?attr/colorSurface">
 
-</RelativeLayout>
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:queryHint="@string/map_search_hint"
+            android:iconifiedByDefault="false"
+            android:background="@android:color/transparent" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

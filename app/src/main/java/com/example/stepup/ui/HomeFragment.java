@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -67,8 +68,13 @@ public class HomeFragment extends Fragment {
             @Override
             public void onEditClicked(GoalWithReminder item) {
                 long goalId = item.goal.id;
+                // אנימציה: ה-Edit form נכנס ב-fade, מה שעוזב נעלם ב-fade.
+                // בחזרה (back press) - אותו הדבר אבל הפוך.
                 requireActivity().getSupportFragmentManager()
                         .beginTransaction()
+                        .setCustomAnimations(
+                                R.anim.fade_in, R.anim.fade_out,
+                                R.anim.fade_in, R.anim.fade_out)
                         .replace(R.id.nav_host_fragment, EditGoalFragment.newInstance(goalId))
                         .addToBackStack("edit_goal")
                         .commit();
@@ -82,13 +88,31 @@ public class HomeFragment extends Fragment {
 
         rvGoals.setAdapter(adapter);
 
-        view.findViewById(R.id.fabAddGoal).setOnClickListener(v -> {
+        View fab = view.findViewById(R.id.fabAddGoal);
+        fab.setOnClickListener(v -> {
+            // אנימציה זהה למעבר ל-Edit Goal
             requireActivity().getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.fade_in, R.anim.fade_out,
+                            R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.nav_host_fragment, EditGoalFragment.newInstance(-1))
                     .addToBackStack("add_goal")
                     .commit();
         });
+
+        // אנימציית כניסה ל-FAB - מתחיל בגודל 0 ושקוף, גדל לחיים
+        // עם overshoot (חורג מעט מעבר ל-1 ואז חוזר). יוצר תחושת
+        // "קפיצה" קלה במקום הופעה משעממת.
+        fab.setScaleX(0f);
+        fab.setScaleY(0f);
+        fab.setAlpha(0f);
+        fab.animate()
+                .scaleX(1f).scaleY(1f).alpha(1f)
+                .setStartDelay(200)
+                .setDuration(400)
+                .setInterpolator(new OvershootInterpolator(1.4f))
+                .start();
 
         Executors.newSingleThreadExecutor().execute(() -> {
             if (dao.getAllCategories().isEmpty()) {
@@ -113,6 +137,9 @@ public class HomeFragment extends Fragment {
                 getActivity().runOnUiThread(() -> {
                     adapter.setItems(items);
                     updateVisibility(items.isEmpty());
+                    // הפעלת אנימציית fall-down של כל הפריטים מחדש,
+                    // אחרי שהרשימה נטענה
+                    rvGoals.scheduleLayoutAnimation();
                 });
             }
         });

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    רקע עיגולי חצי-שקוף לבן (33%) לאייקון הקטגוריה הקטן שבכרטיסייה.
+    הולך טוב על כל הגרדיאנטים כי הלבן השקוף מתערבב עם הצבע מתחת.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#55FFFFFF" />
+</shape>

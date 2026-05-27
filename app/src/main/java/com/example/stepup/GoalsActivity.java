@@ -67,9 +67,12 @@ public class GoalsActivity extends AppCompatActivity implements NavigationView.O
         toggle.syncState();
         Log.d(TAG, "onCreate: ActionBarDrawerToggle setup finished");
 
-        // Load the default fragment
+        // Load the default fragment (בלי אנימציה כי זו הטעינה הראשונה,
+        // לא מעבר בין מסכים)
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment, new HomeFragment()).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.nav_host_fragment, new HomeFragment())
+                    .commit();
             navigationView.setCheckedItem(R.id.nav_home);
             Log.d(TAG, "onCreate: Default fragment loaded");
         }
@@ -93,9 +96,14 @@ public class GoalsActivity extends AppCompatActivity implements NavigationView.O
         }
 
         if (selectedFragment != null) {
+            // setCustomAnimations(enter, exit, popEnter, popExit) - אנימציות
+            // למעבר בין מסכי-משנה דרך התפריט הצדדי. fade עדין של 300ms.
             getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.fade_in, R.anim.fade_out,
+                            R.anim.fade_in, R.anim.fade_out)
                     .replace(R.id.nav_host_fragment, selectedFragment)
-                    .addToBackStack(null) // Add this line
+                    .addToBackStack(null)
                     .commit();
         }
 

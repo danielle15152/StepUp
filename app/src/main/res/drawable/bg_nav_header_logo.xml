@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    רקע מרובע עם פינות מעוגלות לאייקון ב-nav header.
+    שקיפות 18% (alpha=2E מתוך FF) מעל הגרדיאנט הראשי.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#2EFFFFFF" />
+    <corners android:radius="16dp" />
+</shape>

@@ -1,95 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    כרטיסיית מטרה דינמית.
+
+    מבנה - 4 שכבות (מאחור לקדמה):
+    1. cardBackground - גרדיאנט הצבע (נקבע לפי שעה/מיקום)
+    2. ivDecoration  - אייקון דקורטיבי גדול, חצי-שקוף, בפינה
+    3. scrim         - גרדיאנט שחור 0%→60% מלמעלה למטה (לקריאות הטקסט)
+    4. תוכן: שורת תווית, שם, ימים/זמן, וכפתורי edit/delete - הכל בלבן
+
+    כל הטקסטים לבנים כי ה-scrim מבטיח קונטרסט מספיק על כל גרדיאנט.
+
+    notificationType משפיע על המעטפת (ב-Adapter):
+    - cardCornerRadius (Gentle=20dp, Tough=10dp)
+    - strokeWidth/strokeColor (Tough מקבל stroke לבן 1.5dp)
+-->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardGoal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
-    android:layout_marginTop="8dp"
+    android:layout_marginTop="6dp"
     android:layout_marginEnd="16dp"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="4dp">
+    android:layout_marginBottom="6dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="6dp"
+    app:cardPreventCornerOverlap="true"
+    app:strokeColor="@android:color/transparent"
+    app:strokeWidth="0dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
+        android:id="@+id/cardBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:background="@drawable/bg_card_noon"
+        tools:background="@drawable/bg_card_morning">
 
+        <!-- שכבה 2: scrim - גרדיאנט שחור שקוף, יושב ישר על הרקע
+             ומבטיח קונטרסט לקריאות הטקסט -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_card_scrim" />
+
+        <!-- שכבה 3: אייקון דקורטיבי - מעל ה-scrim כדי שלא ייחתך.
+             alpha 0.45 = נראה היטב מעל הרקע הכהה ועדיין רך כדקורציה -->
         <ImageView
-            android:id="@+id/ivCategoryIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/category_icon_background"
-            android:padding="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@android:color/white"
+            android:id="@+id/ivDecoration"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="-20dp"
+            android:layout_marginBottom="-25dp"
+            android:alpha="0.45"
+            android:scaleType="fitCenter"
+            android:contentDescription="@null"
             tools:src="@drawable/ic_category_health" />
 
-        <TextView
-            android:id="@+id/tvGoalName"
-            android:layout_width="0dp"
+        <!-- שכבה 4: תוכן הכרטיסייה - כל הטקסטים לבנים -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/btnEdit"
-            app:layout_constraintStart_toEndOf="@id/ivCategoryIcon"
-            app:layout_constraintTop_toTopOf="@id/ivCategoryIcon"
-            tools:text="Drink 2L of Water" />
+            android:padding="16dp">
 
-        <!-- Reminder Days -->
-        <TextView
-            android:id="@+id/tvReminderDays"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?android:attr/textColorSecondary"
-            app:layout_constraintEnd_toEndOf="@id/tvGoalName"
-            app:layout_constraintStart_toStartOf="@id/tvGoalName"
-            app:layout_constraintTop_toBottomOf="@id/tvGoalName"
-            tools:text="Mon, Wed, Fri" />
-            
-        <!-- Reminder Specifics (Time or Location) -->
-        <TextView
-            android:id="@+id/tvReminderSpecifics"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="?android:attr/textColorSecondary"
-            android:drawablePadding="4dp"
-            app:layout_constraintEnd_toEndOf="@id/tvGoalName"
-            app:layout_constraintStart_toStartOf="@id/tvGoalName"
-            app:layout_constraintTop_toBottomOf="@id/tvReminderDays"
-            tools:text="at 08:00"
-            tools:drawableStart="@android:drawable/ic_menu_my_calendar"/>
+            <!-- אייקון קטגוריה קטן (40dp) בפינה הימנית-עליונה -->
+            <ImageView
+                android:id="@+id/ivCategoryIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:background="@drawable/bg_category_chip"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@drawable/ic_category_health" />
 
-        <ImageButton
-            android:id="@+id/btnEdit"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/edit_goal"
-            android:src="@android:drawable/ic_menu_edit"
-            app:layout_constraintEnd_toStartOf="@id/btnDelete"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorControlNormal" />
+            <!-- תווית עליונה: "07:30 · GENTLE" - 11sp, אטומה חלקית -->
+            <TextView
+                android:id="@+id/tvLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.08"
+                android:textAllCaps="true"
+                android:textSize="11sp"
+                android:alpha="0.85"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toStartOf="@id/ivCategoryIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="07:30 · GENTLE" />
 
-        <ImageButton
-            android:id="@+id/btnDelete"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/delete_goal"
-            android:src="@android:drawable/ic_menu_delete"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorControlNormal" />
+            <!-- שם המטרה - 18sp בולד -->
+            <TextView
+                android:id="@+id/tvGoalName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif-black"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                app:layout_constraintEnd_toStartOf="@id/ivCategoryIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvLabel"
+                tools:text="מתיחות בוקר" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- ימי השבוע -->
+            <TextView
+                android:id="@+id/tvReminderDays"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:alpha="0.9"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvGoalName"
+                tools:text="א׳, ב׳, ג׳, ד׳, ה׳" />
+
+            <!-- מידע על השעה/המיקום -->
+            <TextView
+                android:id="@+id/tvReminderSpecifics"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:alpha="0.9"
+                android:drawablePadding="6dp"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvReminderDays"
+                tools:drawableStart="@drawable/ic_clock_small"
+                tools:text="בכל יום ב-07:30" />
+
+            <!-- שורת כפתורי פעולה - edit + delete -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvReminderSpecifics">
+
+                <ImageButton
+                    android:id="@+id/btnEdit"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/edit_goal"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:alpha="0.9"
+                    app:tint="@android:color/white" />
+
+                <ImageButton
+                    android:id="@+id/btnDelete"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/delete_goal"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:alpha="0.9"
+                    app:tint="@android:color/white" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
 
 </com.google.android.material.card.MaterialCardView>

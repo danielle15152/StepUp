@@ -1,8 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- We inherit from the framework's animation style -->
+
+    <!-- אנימציה של ה-BottomSheet (קיים מקודם) -->
     <style name="Animation.App.BottomSheet" parent="@android:style/Animation.Activity">
         <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
         <item name="android:windowExitAnimation">@anim/slide_out_down</item>
     </style>
+
+    <!--
+        תווית קטנה של סקציה - שמופיעה לפני כל קבוצת רכיבים בטופס:
+        "קטגוריה", "סגנון התראה", "חזרה בימים", וכו'.
+        מאפיינים: 11sp, sans-serif-medium, אותיות גדולות, ריווח אותיות גדול,
+        בצבע אינדיגו של המותג.
+    -->
+    <style name="SectionLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/brand_indigo</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <!--
+        סטייל גלובלי לצ'יפים מסוג Filter (אלה שאפשר לסמן).
+        משמש גם דרך chipStyle בתמה (כל chip ב-XML מקבל אוטומטית),
+        וגם דרך style="..." בכל מקום שצריך.
+
+        השינויים המרכזיים מהדיפולט של Material3:
+        - chipCornerRadius=22dp: pill-shaped במקום פינות מעוגלות עדינות
+        - chipMinHeight=40dp: גבוה מעט יותר → קל יותר ללחוץ
+        - chipStrokeWidth=1.5dp: stroke בולט יותר כשלא נבחר
+        - textStartPadding/textEndPadding גדולים יותר: ריווח נוח לעין
+    -->
+    <style name="App.Chip.Filter" parent="Widget.Material3.Chip.Filter">
+        <item name="chipCornerRadius">22dp</item>
+        <item name="chipMinHeight">40dp</item>
+        <item name="chipStrokeWidth">1.5dp</item>
+        <item name="textStartPadding">10dp</item>
+        <item name="textEndPadding">10dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
 </resources>

@@ -1,20 +1,105 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- ==================================================================== -->
+    <!-- BASE THEME - LIGHT MODE                                              -->
+    <!--                                                                       -->
+    <!-- Material3 משתמש במערכת של "color tokens" - שמות מופשטים שמתורגמים   -->
+    <!-- לצבעים אמיתיים. למשל colorPrimary הוא הצבע הראשי ש-                  -->
+    <!-- MaterialButton, FloatingActionButton ועוד רכיבים משתמשים בו כברירת   -->
+    <!-- מחדל. כך אנחנו לא צריכים לקבוע צבע ידנית בכל מקום בנפרד.            -->
+    <!-- ==================================================================== -->
     <style name="Base.Theme.StepUp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!-- ========== PRIMARY (הצבע הראשי - אינדיגו) ========== -->
+        <!-- משמש את: כפתורים ראשיים, ProgressIndicator, TopAppBar, Switch on -->
+        <item name="colorPrimary">@color/brand_indigo</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">#E0E1FE</item>
+        <item name="colorOnPrimaryContainer">#1A1B6D</item>
+
+        <!-- ========== SECONDARY (הצבע המשני - מנטה) ========== -->
+        <!-- משמש את: FAB, chips נבחרים, badges, accent -->
+        <item name="colorSecondary">@color/brand_mint</item>
+        <item name="colorOnSecondary">@color/ink_900</item>
+        <item name="colorSecondaryContainer">#CFF5EA</item>
+        <item name="colorOnSecondaryContainer">#00382D</item>
+
+        <!-- ========== TERTIARY (צבע שלישי - ורוד) ========== -->
+        <!-- משמש לעיתים נדירות, לאקסנטים מיוחדים -->
+        <item name="colorTertiary">@color/brand_pink</item>
+        <item name="colorOnTertiary">@color/white</item>
+
+        <!-- ========== ERROR ========== -->
+        <item name="colorError">@color/status_error</item>
+        <item name="colorOnError">@color/white</item>
+
+        <!-- ========== BACKGROUND & SURFACE ========== -->
+        <!-- colorBackground = הרקע הכללי של המסך -->
+        <!-- colorSurface = רקע של כרטיסיות, BottomSheet, Dialog, AppBar -->
+        <item name="android:colorBackground">@color/cloud_50</item>
+        <item name="colorOnBackground">@color/ink_900</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/ink_900</item>
+        <item name="colorSurfaceVariant">@color/cloud_100</item>
+        <item name="colorOnSurfaceVariant">@color/ink_500</item>
+
+        <!-- ========== OUTLINE (קווי גבול) ========== -->
+        <item name="colorOutline">@color/cloud_200</item>
+
+        <!-- ========== STATUS BAR ========== -->
+        <!-- שורת המצב למעלה (שעון, סוללה). שקופה כדי לאפשר edge-to-edge.   -->
+        <!-- windowLightStatusBar=true אומר שהאייקונים יהיו כהים על רקע בהיר. -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/cloud_50</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+
+        <!-- ========== TYPOGRAPHY OVERRIDES ========== -->
+        <!-- אפשר להגדיר בעתיד פונט מותאם כאן. כרגע נסמכים על ברירת מחדל. -->
+
+        <!-- ========== RTL GLOBAL ENFORCEMENT ========== -->
+        <!-- אילוץ כיוון RTL לכל האפליקציה. -->
+        <!-- בלי זה, על מכשירים שמוגדרים באנגלית (רוב המכשירים בעולם),       -->
+        <!-- ה-layoutDirection נשאר LTR והאייקונים מופיעים בצד הלא נכון של    -->
+        <!-- הטקסט (drawableStart בעצם מסביר "ימין" במקום "שמאל").             -->
+        <!-- "locale" אומר ללכת לפי שפת המכשיר; אנחנו רוצים תמיד RTL.         -->
+        <item name="android:layoutDirection">rtl</item>
+
+        <!-- ========== GLOBAL CHIP STYLE ========== -->
+        <!-- הופך את כל הצ'יפים באפליקציה ל-pill-shaped (פינות גדולות),     -->
+        <!-- בלי שנצטרך להגדיר style על כל chip בנפרד. -->
+        <item name="chipStyle">@style/App.Chip.Filter</item>
+
     </style>
 
+    <!-- ==================================================================== -->
+    <!-- אליאס - הסגנון בפועל שמופיע ב-AndroidManifest                       -->
+    <!-- ==================================================================== -->
     <style name="Theme.StepUp" parent="Base.Theme.StepUp" />
-    
-    <!-- This theme is for the bottom sheet. It inherits from the main app theme 
-         to ensure all Material 3 components render correctly. -->
+
+    <!-- ==================================================================== -->
+    <!-- BOTTOM SHEET THEME                                                    -->
+    <!-- תמה מיוחדת ל-GoalDetailsActivity. שקופה כי ה-Activity הוא            -->
+    <!-- bottom sheet ויש לו צל מעל הרקע.                                     -->
+    <!-- ==================================================================== -->
     <style name="Theme.App.BottomSheet" parent="Theme.StepUp">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/Animation.App.BottomSheet</item>
     </style>
-    
+
+    <!-- ==================================================================== -->
+    <!-- SPLASH THEME                                                          -->
+    <!-- תמה למסך הפתיחה - StatusBar שקוף, ללא ActionBar.                    -->
+    <!-- ==================================================================== -->
+    <style name="Theme.App.Splash" parent="Theme.StepUp">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+    </style>
+
 </resources>

@@ -48,6 +48,16 @@ public class Reminder {
      */
     public long lastLocationNotificationTimestamp;
 
+    /**
+     * שם המיקום בפורמט קריא (לדוגמה: "הרצל 12, רמת גן").
+     * נקבע אוטומטית ב-MapPickerActivity דרך reverse geocoding.
+     * יכול להיות null אם:
+     *  - זו תזכורת מבוססת שעה (לא מיקום)
+     *  - ה-reverse geocoding נכשל (אין רשת/לא נמצאה כתובת)
+     * במקרה כזה ה-UI יציג את הקואורדינטות במקום.
+     */
+    public String locationName;
+
 
     // Room needs a constructor for initialization
     public Reminder() {}

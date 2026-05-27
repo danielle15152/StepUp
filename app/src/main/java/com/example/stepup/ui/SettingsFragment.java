@@ -6,23 +6,45 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
-import com.example.stepup.R;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import com.example.stepup.R;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.materialswitch.MaterialSwitch;
+
+/**
+ * מסך הגדרות.
+ *
+ * שתי הגדרות פעילות:
+ *  1. צלילי התראה (boolean ב-SharedPreferences)
+ *  2. ערכת נושא (Light/Dark/Auto, נשמר ב-SharedPreferences ומוחל
+ *     ב-AppCompatDelegate.setDefaultNightMode)
+ */
 public class SettingsFragment extends Fragment {
 
     private static final String PREFS_NAME = "StepUpPrefs";
     private static final String NOTIFICATION_SOUND_KEY = "notification_sound_enabled";
+    private static final String THEME_MODE_KEY = "theme_mode";
 
-    private SwitchMaterial switchNotificationSound;
+    // ערכים אפשריים ל-theme: 1=Light, 2=Dark, 0=Auto (לפי המכשיר)
+    // המספרים מתאימים ל-AppCompatDelegate.MODE_NIGHT_NO/_YES/_FOLLOW_SYSTEM
+    private static final int THEME_LIGHT = AppCompatDelegate.MODE_NIGHT_NO;
+    private static final int THEME_DARK = AppCompatDelegate.MODE_NIGHT_YES;
+    private static final int THEME_AUTO = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+
+    private MaterialSwitch switchNotificationSound;
+    private ChipGroup chipGroupTheme;
     private SharedPreferences sharedPreferences;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
@@ -30,30 +52,51 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize SharedPreferences
         sharedPreferences = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-        // Find views
         switchNotificationSound = view.findViewById(R.id.switchNotificationSound);
+        chipGroupTheme = view.findViewById(R.id.chipGroupTheme);
 
-        // Load the saved preference and set the switch state
-        loadPreference();
+        // טעינת הערכים הנוכחיים מ-SharedPreferences והגדרת ה-UI
+        loadCurrentValues();
 
-        // Set a listener to save the preference when the switch is toggled
-        switchNotificationSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            savePreference(isChecked);
+        // מאזין לשינוי במצב ההתראות
+        switchNotificationSound.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> saveNotificationSound(isChecked));
+
+        // מאזין לשינוי בערכת הנושא - מיישם מיד ושומר
+        chipGroupTheme.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) return;
+            int checkedId = checkedIds.get(0);
+            int themeMode;
+            if (checkedId == R.id.chip_theme_light)      themeMode = THEME_LIGHT;
+            else if (checkedId == R.id.chip_theme_dark)  themeMode = THEME_DARK;
+            else                                          themeMode = THEME_AUTO;
+
+            saveThemeMode(themeMode);
+            // החלת ערכת הנושא בזמן אמת. המסך יתעדכן אוטומטית.
+            AppCompatDelegate.setDefaultNightMode(themeMode);
         });
     }
 
-    private void loadPreference() {
-        // Get the saved value. Default to 'true' (enabled) if not found.
-        boolean isSoundEnabled = sharedPreferences.getBoolean(NOTIFICATION_SOUND_KEY, true);
-        switchNotificationSound.setChecked(isSoundEnabled);
+    private void loadCurrentValues() {
+        // ברירת מחדל: צלילי התראה מופעלים, ערכת נושא לפי המכשיר
+        boolean soundEnabled = sharedPreferences.getBoolean(NOTIFICATION_SOUND_KEY, true);
+        switchNotificationSound.setChecked(soundEnabled);
+
+        int themeMode = sharedPreferences.getInt(THEME_MODE_KEY, THEME_AUTO);
+        int chipToCheck;
+        if (themeMode == THEME_LIGHT)      chipToCheck = R.id.chip_theme_light;
+        else if (themeMode == THEME_DARK)  chipToCheck = R.id.chip_theme_dark;
+        else                                chipToCheck = R.id.chip_theme_auto;
+        chipGroupTheme.check(chipToCheck);
     }
 
-    private void savePreference(boolean isEnabled) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(NOTIFICATION_SOUND_KEY, isEnabled);
-        editor.apply(); // Use apply() for asynchronous saving
+    private void saveNotificationSound(boolean isEnabled) {
+        sharedPreferences.edit().putBoolean(NOTIFICATION_SOUND_KEY, isEnabled).apply();
+    }
+
+    private void saveThemeMode(int themeMode) {
+        sharedPreferences.edit().putInt(THEME_MODE_KEY, themeMode).apply();
     }
 }

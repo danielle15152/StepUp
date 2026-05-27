@@ -1,7 +1,58 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- ==================================================================== -->
+    <!-- BASE THEME - DARK MODE                                                -->
+    <!--                                                                       -->
+    <!-- במצב כהה, צבעים מתהפכים: רקעים כהים, טקסטים בהירים.                 -->
+    <!-- שמרנו על אותם שמות (colorPrimary וכו') אבל הערכים שונים.            -->
+    <!-- Android בוחר אוטומטית בין values/themes.xml ל-values-night/themes.xml -->
+    <!-- לפי הגדרת המכשיר.                                                    -->
+    <!-- ==================================================================== -->
     <style name="Base.Theme.StepUp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <!-- ========== PRIMARY ========== -->
+        <!-- במצב כהה אינדיגו נראה עמום, אז משתמשים בגרסה בהירה יותר -->
+        <item name="colorPrimary">@color/brand_indigo_light</item>
+        <item name="colorOnPrimary">@color/ink_900</item>
+        <item name="colorPrimaryContainer">#3A3BAA</item>
+        <item name="colorOnPrimaryContainer">#E0E1FE</item>
+
+        <!-- ========== SECONDARY (מנטה - בהיר יותר במצב כהה) ========== -->
+        <item name="colorSecondary">@color/brand_mint</item>
+        <item name="colorOnSecondary">@color/ink_900</item>
+        <item name="colorSecondaryContainer">#005140</item>
+        <item name="colorOnSecondaryContainer">#CFF5EA</item>
+
+        <!-- ========== TERTIARY ========== -->
+        <item name="colorTertiary">@color/brand_pink</item>
+        <item name="colorOnTertiary">@color/ink_900</item>
+
+        <!-- ========== ERROR ========== -->
+        <item name="colorError">#F87171</item>
+        <item name="colorOnError">@color/ink_900</item>
+
+        <!-- ========== BACKGROUND & SURFACE ========== -->
+        <!-- במצב כהה הרקעים הם ink ולא cloud -->
+        <item name="android:colorBackground">@color/ink_900</item>
+        <item name="colorOnBackground">@color/cloud_50</item>
+        <item name="colorSurface">@color/ink_800</item>
+        <item name="colorOnSurface">@color/cloud_50</item>
+        <item name="colorSurfaceVariant">@color/ink_700</item>
+        <item name="colorOnSurfaceVariant">@color/ink_400</item>
+
+        <!-- ========== OUTLINE ========== -->
+        <item name="colorOutline">@color/ink_700</item>
+
+        <!-- ========== STATUS BAR (במצב כהה אייקונים בהירים) ========== -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/ink_900</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+
+        <!-- ========== RTL + CHIP STYLE (זהה לתמה הבהירה) ========== -->
+        <item name="android:layoutDirection">rtl</item>
+        <item name="chipStyle">@style/App.Chip.Filter</item>
+
     </style>
+
 </resources>

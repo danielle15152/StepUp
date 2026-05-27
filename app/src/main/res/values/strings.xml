@@ -1,9 +1,103 @@
 <resources>
+
+    <!-- ==================================================================== -->
+    <!-- APP IDENTITY                                                          -->
+    <!-- ==================================================================== -->
     <string name="app_name">StepUp</string>
-    <string name="channel_name">Goal Reminders</string>
-    <string name="channel_description">Notifications for your goals</string>
-    <string name="edit_goal">Edit goal</string>
-    <string name="delete_goal">Delete goal</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="app_tagline">לעלות צעד אחר צעד</string>
+
+    <!-- ==================================================================== -->
+    <!-- NOTIFICATIONS                                                         -->
+    <!-- ==================================================================== -->
+    <string name="channel_name">תזכורות מטרות</string>
+    <string name="channel_description">התראות עבור המטרות שלך</string>
+
+    <!-- ==================================================================== -->
+    <!-- NAVIGATION DRAWER                                                     -->
+    <!-- ==================================================================== -->
+    <string name="navigation_drawer_open">פתיחת תפריט ניווט</string>
+    <string name="navigation_drawer_close">סגירת תפריט ניווט</string>
+    <string name="nav_home">בית</string>
+    <string name="nav_progress">דוח התקדמות</string>
+    <string name="nav_map">מפה</string>
+    <string name="nav_settings">הגדרות</string>
+
+    <!-- ==================================================================== -->
+    <!-- HOME SCREEN                                                           -->
+    <!-- ==================================================================== -->
+    <string name="home_welcome_title">ברוכה הבאה ל-StepUp!</string>
+    <string name="home_empty_subtitle">המטרות שלך יופיעו כאן. לחצי על כפתור הפלוס כדי להוסיף את המטרה הראשונה.</string>
+    <string name="home_add_goal_cd">הוספת מטרה</string>
+    <string name="home_first_goal_cd">הוספת המטרה הראשונה שלך</string>
+
+    <!-- ==================================================================== -->
+    <!-- GOAL CARD (item_goal)                                                 -->
+    <!-- שומרים על שמות ישנים (edit_goal, delete_goal) כדי לא לשבור            -->
+    <!-- את הקוד הקיים ב-layouts.                                              -->
+    <!-- ==================================================================== -->
+    <string name="goal_edit">עריכת מטרה</string>
+    <string name="goal_delete">מחיקת מטרה</string>
+    <string name="delete_goal">מחיקת מטרה</string>
+
+    <!-- ==================================================================== -->
+    <!-- EDIT/CREATE GOAL FORM                                                 -->
+    <!-- ==================================================================== -->
+    <string name="edit_goal">עריכת מטרה</string>
+    <string name="edit_goal_create">מטרה חדשה</string>
+    <string name="edit_goal_name_hint">שם המטרה</string>
+    <string name="edit_goal_description_hint">תיאור</string>
+    <string name="edit_goal_category_label">קטגוריה</string>
+    <string name="edit_goal_notification_style_label">סגנון התראה</string>
+    <string name="edit_goal_notification_gentle">עדינה</string>
+    <string name="edit_goal_notification_tough">תקיפה</string>
+    <string name="edit_goal_repeat_label">חזרה בימים</string>
+    <string name="edit_goal_reminder_type_label">סוג תזכורת</string>
+    <string name="edit_goal_reminder_type_time">לפי שעה</string>
+    <string name="edit_goal_reminder_type_location">לפי מיקום</string>
+    <string name="edit_goal_pick_time">בחירת שעה</string>
+    <string name="edit_goal_pick_location">בחירת מיקום</string>
+    <string name="edit_goal_no_location_selected">לא נבחר מיקום</string>
+    <string name="action_cancel">ביטול</string>
+    <string name="action_save">שמירה</string>
+
+    <!-- ימי השבוע - קיצורים -->
+    <string name="day_sun">א׳</string>
+    <string name="day_mon">ב׳</string>
+    <string name="day_tue">ג׳</string>
+    <string name="day_wed">ד׳</string>
+    <string name="day_thu">ה׳</string>
+    <string name="day_fri">ו׳</string>
+    <string name="day_sat">ש׳</string>
+
+    <!-- ==================================================================== -->
+    <!-- GOAL DETAILS BOTTOM SHEET                                             -->
+    <!-- ==================================================================== -->
+    <string name="details_skip_today">דלגי להיום</string>
+    <string name="details_did_it">✓ עשיתי את זה!</string>
+    <string name="details_completed">השלמתי להיום!</string>
+    <string name="details_skipped">דילגתי להיום.</string>
+    <string name="details_undo">ביטול</string>
+
+    <!-- ==================================================================== -->
+    <!-- PROGRESS REPORT                                                       -->
+    <!-- ==================================================================== -->
+    <string name="progress_title">דוח התקדמות</string>
+    <string name="progress_range_week">השבוע</string>
+    <string name="progress_range_month">החודש</string>
+    <string name="progress_range_quarter">3 חודשים אחרונים</string>
+
+    <!-- ==================================================================== -->
+    <!-- SETTINGS                                                              -->
+    <!-- ==================================================================== -->
+    <string name="settings_title">הגדרות</string>
+    <string name="settings_back_cd">חזרה</string>
+    <string name="settings_section_general">כללי</string>
+    <string name="settings_notification_sound">צלילי התראה</string>
+    <string name="settings_notification_sound_description">הפעלה או כיבוי של צלילים לתזכורות מטרות.</string>
+
+    <!-- ==================================================================== -->
+    <!-- MAP                                                                   -->
+    <!-- ==================================================================== -->
+    <string name="map_search_hint">חיפוש מיקום</string>
+
 </resources>

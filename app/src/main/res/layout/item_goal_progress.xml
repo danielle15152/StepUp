@@ -1,40 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    כרטיסיית התקדמות של מטרה ב-Progress Report.
+
+    מבנה:
+    - MaterialCardView מעוטף - מקבל את הצבעים מהתמה (surface, outline)
+    - כותרת: שם המטרה מצד אחד, אחוז גדול מצד שני
+    - תיאור: "X מתוך Y ימים"
+    - LinearProgressIndicator עבה (8dp) עם פינות מעוגלות
+
+    צבע ה-indicator נקבע ב-Adapter לפי האחוז:
+      0-29%  → ורוד (רחוק)
+      30-69% → צהוב (בדרך)
+      70-99% → אינדיגו (כמעט)
+      100%   → מנטה (הצלחה)
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="2dp"
+    app:strokeColor="?attr/colorOutline"
+    app:strokeWidth="0.5dp"
+    app:cardBackgroundColor="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="18dp">
 
-        <TextView
-            android:id="@+id/tvGoalName"
-            android:layout_width="wrap_content"
+        <!-- שורת כותרת: שם המטרה + אחוז גדול -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textStyle="bold"
-            tools:text="Drink 2L of Water"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:baselineAligned="false">
 
+            <TextView
+                android:id="@+id/tvGoalName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                tools:text="מתיחות בוקר" />
+
+            <TextView
+                android:id="@+id/tvPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:fontFamily="sans-serif-black"
+                android:textSize="22sp"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="87%" />
+        </LinearLayout>
+
+        <!-- LinearProgressIndicator - Material3 progress bar -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:trackThickness="8dp"
+            app:trackCornerRadius="4dp"
+            app:indicatorColor="@color/brand_mint"
+            app:trackColor="?attr/colorSurfaceVariant"
+            android:progress="0"
+            tools:progress="87" />
+
+        <!-- שורת stats: "X מתוך Y ימים" -->
         <TextView
             android:id="@+id/tvStats"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            tools:text="Completed 5 of 8 days (62%)"/>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            tools:progress="62"/>
+            android:textSize="12sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            tools:text="7 מתוך 8 ימים" />
 
     </LinearLayout>
 

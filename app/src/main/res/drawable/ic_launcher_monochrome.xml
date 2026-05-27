@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    גרסת monochrome של האייקון (Android 13+).
+    כשהמשתמש מפעיל "Themed icons" המערכת מסירה את הצבעים
+    וצובעת את ה-fillColor בצבע אחיד מהטפט.
+    לכן הגרסה הזו משתמשת רק ב-fillColor (בלי strokes) - הכל בלבן.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 3 הבלוקים - כולם באותו לבן מלא (המערכת תצבע אותם) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M30,72 L48,72 A4,4 0 0 1 52,76 L52,84 A4,4 0 0 1 48,88 L30,88 A4,4 0 0 1 26,84 L26,76 A4,4 0 0 1 30,72 Z" />
+
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M56,52 L74,52 A4,4 0 0 1 78,56 L78,84 A4,4 0 0 1 74,88 L56,88 A4,4 0 0 1 52,84 L52,56 A4,4 0 0 1 56,52 Z" />
+
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M82,28 L100,28 A4,4 0 0 1 104,32 L104,84 A4,4 0 0 1 100,88 L82,88 A4,4 0 0 1 78,84 L78,32 A4,4 0 0 1 82,28 Z" />
+
+    <!-- החץ כצורה ממולאת במקום stroke (מלבן צר באלכסון בעובי 6) -->
+    <!-- מ-(36,60) אל (88,22) - מלבן שעובר בקו אלכסוני -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M34.7,57.6 L86.7,19.6 L89.3,23.0 L37.3,61.0 Z" />
+
+    <!-- נקודה בקצה החץ -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M88,15 A6,6 0 0 1 88,27 A6,6 0 0 1 88,15 Z" />
+
+</vector>

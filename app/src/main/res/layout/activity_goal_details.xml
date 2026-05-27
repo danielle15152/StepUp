@@ -1,38 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    Bottom Sheet של פרטי מטרה - מופיע בלחיצה על כרטיסייה או על התראה.
+
+    מבנה (זהה לכרטיסייה אבל בקנה מידה גדול):
+    1. main_content - כיסוי שחור חצי-שקוף מאחורי ה-sheet
+    2. bottom_sheet - FrameLayout עם פינות עליונות מעוגלות
+       - הרקע הגרדיאנט נקבע דינמית ב-Activity לפי שעה/מיקום
+       - clipToOutline+outlineProvider מבטיחים שכל הילדים ייחתכו לפי הפינות
+    3. ivBackgroundGraphic - אייקון דקורטיבי גדול
+    4. scrim - גרדיאנט שחור לקריאות
+    5. תוכן בלבן: drag handle, קטגוריה, שם, תיאור, ימים/זמן, כפתורים
+-->
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#80000000"
+    android:background="#99000000"
     tools:context=".GoalDetailsActivity">
 
     <FrameLayout
         android:id="@+id/bottom_sheet"
-        style="@style/Widget.MaterialComponents.BottomSheet.Modal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:background="@drawable/bottom_sheet_background_gentle"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        android:background="@drawable/bg_sheet_noon"
+        android:clipToOutline="true"
+        android:outlineProvider="background"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        tools:background="@drawable/bg_sheet_morning">
 
+        <!-- שכבה 1: אייקון דקורטיבי גדול בפינה הימנית-עליונה.
+             alpha 0.18 כי הוא יושב מעל הגרדיאנט הצבעוני (לא מעל scrim כהה).
+             ה-tools:src לתצוגה ב-design view בלבד. -->
         <ImageView
             android:id="@+id/ivBackgroundGraphic"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_gravity="bottom"
-            android:scaleType="fitEnd"
-            android:alpha="0.4"
-            tools:src="@drawable/ic_gentle_background"/>
+            android:layout_gravity="top|end"
+            android:layout_marginTop="-30dp"
+            android:layout_marginEnd="-40dp"
+            android:alpha="0.18"
+            android:scaleType="fitCenter"
+            android:contentDescription="@null"
+            tools:src="@drawable/ic_category_health" />
 
+        <!-- שכבה 2: התוכן - ה-scrim הוא ה-background של ה-LinearLayout עצמו
+             (במקום View נפרד עם match_parent שגרם ל-FrameLayout להתפרס
+             לכל המסך).
+             כך ה-FrameLayout מחשב גובה לפי התוכן בפועל, וה-scrim הכהה
+             מופיע רק על אזור הטקסטים - בדיוק היכן שצריך לקריאות. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_scrim"
             android:orientation="vertical">
 
+            <!-- Drag handle -->
             <com.google.android.material.bottomsheet.BottomSheetDragHandleView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                app:tint="#80FFFFFF" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -42,6 +71,7 @@
                 android:paddingEnd="24dp"
                 android:paddingBottom="32dp">
 
+                <!-- שורת קטגוריה -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -50,136 +80,202 @@
 
                     <ImageView
                         android:id="@+id/ivCategoryIcon"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        tools:src="@drawable/ic_category_health"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:padding="10dp"
+                        android:background="@drawable/bg_category_chip"
                         app:tint="@android:color/white"
-                        android:background="@drawable/category_icon_background"
-                        android:padding="10dp"/>
+                        tools:src="@drawable/ic_category_health" />
 
                     <TextView
                         android:id="@+id/tvCategoryName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:textSize="20sp"
-                        tools:text="Health"/>
+                        android:layout_marginStart="12dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:letterSpacing="0.05"
+                        android:textColor="@android:color/white"
+                        android:alpha="0.9"
+                        android:textSize="14sp"
+                        tools:text="בריאות" />
                 </LinearLayout>
 
+                <!-- שם המטרה -->
                 <TextView
                     android:id="@+id/tvGoalName"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="-0.02"
+                    android:textColor="@android:color/white"
                     android:textSize="28sp"
-                    android:textStyle="bold"
-                    tools:text="Drink 2L of Water"/>
+                    tools:text="מתיחות בוקר" />
 
+                <!-- תיאור המטרה -->
                 <TextView
                     android:id="@+id/tvGoalDescription"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textSize="18sp"
-                    tools:text="Stay hydrated throughout the day."/>
+                    android:layout_marginTop="6dp"
+                    android:alpha="0.9"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    tools:text="להתחיל את היום עם תנועה. 5 דקות בלבד." />
 
+                <!-- קו מפריד -->
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="0.5dp"
                     android:layout_marginTop="24dp"
-                    android:layout_marginBottom="24dp"
-                    android:background="?android:attr/listDivider"/>
+                    android:layout_marginBottom="20dp"
+                    android:background="#33FFFFFF" />
 
+                <!-- ימי השבוע -->
                 <TextView
                     android:id="@+id/tvReminderDays"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    tools:text="Mon, Wed, Fri"/>
+                    android:alpha="0.95"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    tools:text="ראשון, שני, שלישי, רביעי, חמישי" />
 
+                <!-- שעה / מיקום -->
                 <TextView
                     android:id="@+id/tvReminderSpecifics"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:drawablePadding="8dp"
+                    android:layout_marginTop="6dp"
+                    android:alpha="0.95"
+                    android:drawablePadding="10dp"
                     android:gravity="center_vertical"
-                    android:textSize="16sp"
-                    tools:drawableStart="@android:drawable/ic_menu_my_calendar"
-                    tools:text="at 08:00"/>
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    tools:drawableStart="@drawable/ic_clock_small"
+                    tools:text="בכל יום ב-07:30" />
 
+                <!-- שורת פעולות ראשונית (דלגי / עשיתי) -->
                 <LinearLayout
                     android:id="@+id/initial_action_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_marginTop="32dp"
+                    android:orientation="horizontal"
                     android:visibility="gone"
                     tools:visibility="visible">
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSkip"
                         style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
+                        android:layout_height="52dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"
-                        android:text="Skip Today"/>
+                        android:text="@string/details_skip_today"
+                        android:textColor="@android:color/white"
+                        app:cornerRadius="14dp"
+                        app:strokeColor="#80FFFFFF"
+                        app:strokeWidth="1.5dp" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnComplete"
                         android:layout_width="0dp"
+                        android:layout_height="52dp"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:textSize="16sp"
-                        android:text="I did it!"/>
+                        android:layout_marginStart="12dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/details_did_it"
+                        android:textColor="?attr/colorPrimary"
+                        android:textSize="15sp"
+                        app:backgroundTint="@android:color/white"
+                        app:cornerRadius="14dp" />
                 </LinearLayout>
 
+                <!-- מצב הושלם -->
                 <LinearLayout
                     android:id="@+id/completed_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
                     android:layout_marginTop="32dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
                     android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Completed for today!"
-                        android:textSize="18sp"
-                        android:textColor="?attr/colorPrimary"/>
-                        
-                    <Button
+                        android:fontFamily="sans-serif-black"
+                        android:text="@string/details_completed"
+                        android:textColor="@android:color/white"
+                        android:textSize="22sp" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnUndoComplete"
-                        style="?attr/borderlessButtonStyle"
+                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Undo"/>
+                        android:layout_marginTop="4dp"
+                        android:text="@string/details_undo"
+                        android:textColor="@android:color/white" />
                 </LinearLayout>
-                
+
+                <!-- מצב "לא פעיל היום" - מוצג כשהיום הנוכחי לא נמצא ברשימת
+                     ימי התזכורת. ההודעה במקום כפתורי דלגי/עשיתי. -->
+                <LinearLayout
+                    android:id="@+id/inactive_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:alpha="0.85"
+                        android:text="המטרה לא פעילה היום"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:alpha="0.6"
+                        android:text="נתראה בימים הקרובים 👋"
+                        android:textColor="@android:color/white"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- מצב דילוג -->
                 <LinearLayout
                     android:id="@+id/skipped_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
                     android:layout_marginTop="32dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
                     android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Skipped for today."
-                        android:textSize="18sp"/>
+                        android:alpha="0.9"
+                        android:text="@string/details_skipped"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnUndoSkip"
-                        style="?attr/borderlessButtonStyle"
+                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Undo"/>
+                        android:layout_marginTop="4dp"
+                        android:text="@string/details_undo"
+                        android:textColor="@android:color/white" />
                 </LinearLayout>
 
             </LinearLayout>

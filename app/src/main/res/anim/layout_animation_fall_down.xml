@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    LayoutAnimation - מגדיר איך ההתחלות של פריטי RecyclerView מתואמות.
+
+    delay=15% אומר: כל פריט מתחיל את האנימציה שלו 15% מ-duration
+    אחרי הפריט הקודם. נוצרת תחושת "מפל" - הפריט הראשון נכנס מיד,
+    השני קצת אחריו, וכך הלאה.
+
+    animationOrder=normal אומר: מהראשון (למעלה) לאחרון (למטה).
+-->
+<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+    android:animation="@anim/item_animation_fall_down"
+    android:animationOrder="normal"
+    android:delay="15%" />
