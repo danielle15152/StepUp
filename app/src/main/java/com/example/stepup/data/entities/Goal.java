@@ -13,7 +13,6 @@ import java.util.Locale;
 @Entity()
 public class Goal {
     public Goal() {
-        // Default constructor for Room
         this.creationDate = Long.parseLong(new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date()));
     }
 
@@ -30,34 +29,16 @@ public class Goal {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    /**
-     * Name of goal
-     */
     public String name;
 
-    /**
-     * Description of goal
-     */
     public String description;
 
-    /**
-     * Is this goal active
-     */
     public boolean active;
 
-    /**
-     * The category of the goal
-     */
     public long categoryId;
 
-    /**
-     * The type of notification for the goal (e.g., "GENTLE" or "TOUGH")
-     */
     public String notificationType;
 
-    /**
-     * The date when the goal was created (e.g., YYYYMMDD).
-     */
     public long creationDate;
 
 }

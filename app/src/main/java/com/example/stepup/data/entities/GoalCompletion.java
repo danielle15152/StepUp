@@ -15,9 +15,6 @@ public class GoalCompletion {
 
     public int goalId;
 
-    /**
-     * The date of completion, stored as a long representing the day (e.g., YYYYMMDD).
-     */
     public long completionDate;
 
     public GoalCompletion(int goalId, long completionDate) {

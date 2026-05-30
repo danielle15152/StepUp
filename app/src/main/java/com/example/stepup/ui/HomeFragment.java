@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,11 +28,12 @@ import com.example.stepup.data.Dao;
 import com.example.stepup.data.GeofenceHelper;
 import com.example.stepup.data.entities.GoalWithReminder;
 
-import java.util.List;
-import java.util.concurrent.Executors;
-
 public class HomeFragment extends Fragment {
 
+    // ViewModel שומרת על הנתונים גם כשה-Fragment נהרס (סיבוב מסך, מעבר בין מסכים)
+    private GoalsViewModel viewModel;
+
+    // dao נשמר רק בשביל ה-Adapter (לבדיקת סטטוס השלמה)
     private Dao dao;
     private GoalsAdapter adapter;
     private RecyclerView rvGoals;
@@ -49,8 +51,11 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        AppDatabase db = AppDatabase.getDatabase(requireContext().getApplicationContext());
-        dao = db.dao();
+        // ViewModelProvider מחזיר את אותו ViewModel קיים אם הוא כבר נוצר,
+        // או יוצר חדש אם זו הפעם הראשונה. כך הנתונים שורדים סיבוב מסך.
+        viewModel = new ViewModelProvider(this).get(GoalsViewModel.class);
+
+        dao = AppDatabase.getDatabase(requireContext().getApplicationContext()).dao();
         geofenceHelper = new GeofenceHelper(requireContext());
 
         rvGoals = view.findViewById(R.id.rvGoals);
@@ -61,7 +66,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClicked(GoalWithReminder item) {
                 Intent intent = new Intent(requireActivity(), GoalDetailsActivity.class);
-                intent.putExtra(GoalDetailsActivity.EXTRA_GOAL_ID, (long)item.goal.id);
+                intent.putExtra(GoalDetailsActivity.EXTRA_GOAL_ID, (long) item.goal.id);
                 startActivity(intent);
             }
 
@@ -86,6 +91,14 @@ public class HomeFragment extends Fragment {
 
         rvGoals.setAdapter(adapter);
 
+        // observe – ה-Fragment מקשיב לשינויים ב-LiveData.
+        // getViewLifecycleOwner() מבטיח שה-observer מתנקה אוטומטית כשה-View נהרס
+        viewModel.getGoalsLiveData().observe(getViewLifecycleOwner(), goals -> {
+            adapter.setItems(goals);
+            updateVisibility(goals.isEmpty());
+            rvGoals.scheduleLayoutAnimation();
+        });
+
         View fab = view.findViewById(R.id.fabAddGoal);
         fab.setOnClickListener(v -> {
             requireActivity().getSupportFragmentManager()
@@ -109,33 +122,13 @@ public class HomeFragment extends Fragment {
                 .setInterpolator(new OvershootInterpolator(1.4f))
                 .start();
 
-        Executors.newSingleThreadExecutor().execute(() -> {
-            if (dao.getAllCategories().isEmpty()) {
-                dao.insertCategory(new com.example.stepup.data.entities.Category("Health", true));
-                dao.insertCategory(new com.example.stepup.data.entities.Category("Education", true));
-                dao.insertCategory(new com.example.stepup.data.entities.Category("Sports", true));
-                dao.insertCategory(new com.example.stepup.data.entities.Category("Finance", true));
-            }
-        });
+        viewModel.ensureDefaultCategories();
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();
-        loadGoals();
-    }
-
-    public void loadGoals() {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            List<GoalWithReminder> items = dao.getGoalsWithReminders();
-            if (isAdded() && getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    adapter.setItems(items);
-                    updateVisibility(items.isEmpty());
-                    rvGoals.scheduleLayoutAnimation();
-                });
-            }
-        });
+        viewModel.loadGoals();
     }
 
     private void updateVisibility(boolean isEmpty) {
@@ -147,7 +140,6 @@ public class HomeFragment extends Fragment {
             emptyStateLayout.setVisibility(View.GONE);
         }
     }
-
 
     private void showDeleteConfirmDialog(GoalWithReminder item) {
         boolean hasName = item.goal != null && item.goal.name != null && !item.goal.name.isEmpty();
@@ -183,11 +175,7 @@ public class HomeFragment extends Fragment {
 
     private void deleteGoal(GoalWithReminder item) {
         String goalId = String.valueOf(item.goal.id);
-
-        Executors.newSingleThreadExecutor().execute(() -> {
-            dao.deleteGoalWithReminder(item.goal.id);
-            geofenceHelper.removeGeofence(goalId);
-            loadGoals();
-        });
+        // הסרת ה-Geofence נעשית בתוך ה-Runnable שמועבר ל-ViewModel
+        viewModel.deleteGoal(item.goal.id, () -> geofenceHelper.removeGeofence(goalId));
     }
 }

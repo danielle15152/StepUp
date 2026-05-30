@@ -1,9 +1,12 @@
 package com.example.stepup.data;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -38,6 +41,7 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
             GoalWithReminder goalWithReminder = db.dao().getGoalWithReminderById(goalId);
 
             if (goalWithReminder != null) {
+                ensureNotificationChannel(context);
                 sendNotification(context, goalWithReminder);
                 // קביעת ההתראה הבאה לפי הימים בתזכורת
                 NotificationScheduler.scheduleNotification(context, goalWithReminder.goal, goalWithReminder.reminder);
@@ -45,6 +49,22 @@ public class GoalNotificationReceiver extends BroadcastReceiver {
                 Log.e(TAG, "Could not find GoalWithReminder in database for goal_id: " + goalId);
             }
         });
+    }
+
+    // יוצר את ערוץ ההתראות אם הוא לא קיים עדיין.
+    // קריאה חוזרת בטוחה – אנדרואיד מתעלם ממנה אם הערוץ כבר קיים.
+    private void ensureNotificationChannel(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    SplashActivity.GOAL_NOTIFICATION_CHANNEL_ID,
+                    "StepUp Reminders",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Reminders for your StepUp goals");
+            NotificationManager nm = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (nm != null) nm.createNotificationChannel(channel);
+        }
     }
 
     private void sendNotification(Context context, GoalWithReminder goalWithReminder) {

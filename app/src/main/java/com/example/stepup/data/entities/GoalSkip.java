@@ -15,9 +15,6 @@ public class GoalSkip {
 
     public int goalId;
 
-    /**
-     * The date of the skip, stored as a long representing the day (e.g., YYYYMMDD).
-     */
     public long skipDate;
 
     public GoalSkip(int goalId, long skipDate) {

@@ -21,7 +21,7 @@ import java.util.Collections;
 public class GeofenceHelper {
 
     private static final String TAG = "GeofenceHelper";
-    private static final float GEOFENCE_RADIUS_IN_METERS = 100; // 100 meters radius
+    private static final float GEOFENCE_RADIUS_IN_METERS = 100;
 
     private final Context context;
     private final GeofencingClient geofencingClient;
@@ -33,7 +33,7 @@ public class GeofenceHelper {
 
     public void addGeofence(Goal goal, Reminder reminder) {
         if (reminder == null || reminder.latitude == null || reminder.longitude == null) {
-            return; // No location to set a geofence for
+            return;
         }
 
         String geofenceId = String.valueOf(goal.id);
@@ -70,11 +70,9 @@ public class GeofenceHelper {
                 .addOnFailureListener(e -> Log.e(TAG, "Failed to remove geofence for goal ID: " + geofenceId, e));
     }
 
-    private PendingIntent getGeofencePendingIntent(long goalId) { // Added goalId parameter
+    private PendingIntent getGeofencePendingIntent(long goalId) {
         Intent intent = new Intent(context, GeofenceBroadcastReceiver.class);
-        intent.putExtra("goal_id", goalId); // Pass goalId
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
-        // calling addGeofences() and removeGeofences().
+        intent.putExtra("goal_id", goalId);
         return PendingIntent.getBroadcast(context, (int) goalId, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
     }
 }

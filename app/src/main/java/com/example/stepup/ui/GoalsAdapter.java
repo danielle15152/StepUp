@@ -39,6 +39,12 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
     private final GoalActionsListener listener;
     private final Dao dao;
 
+    // Executor יחיד משותף לכל הכרטיסיות.
+    // במקום ליצור thread חדש לכל כרטיסייה (שגרם לעומס),
+    // כולן מחכות בתור אחד ורצות אחת-אחת.
+    private final java.util.concurrent.ExecutorService iconExecutor =
+            Executors.newSingleThreadExecutor();
+
     // ימי השבוע בעברית. אינדקס 0=ראשון
     private static final String[] DAYS_HE = {"א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"};
 
@@ -172,7 +178,7 @@ public class GoalsAdapter extends RecyclerView.Adapter<GoalsAdapter.GoalsViewHol
                             boolean isLocationBased, boolean isTough) {
         Context ctx = h.itemView.getContext();
 
-        Executors.newSingleThreadExecutor().execute(() -> {
+        iconExecutor.execute(() -> {
             String categoryName = dao.getCategoryNameById(categoryId);
             int categoryIcon = R.drawable.ic_category_health;
             if (categoryName != null) {

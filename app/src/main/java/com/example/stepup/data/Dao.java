@@ -19,7 +19,7 @@ import java.util.List;
 @androidx.room.Dao
 public abstract class Dao {
 
-    // Goal and Reminder Queries
+    // שאילתות מטרות ותזכורות
     @Transaction
     @Query("SELECT * FROM Goal")
     public abstract List<GoalWithReminder> getGoalsWithReminders();
@@ -70,13 +70,20 @@ public abstract class Dao {
     @Update
     public abstract void updateReminder(Reminder reminder);
 
+    // INSERT OR REPLACE – משמש ב-updateGoalWithReminder כדי לטפל במקרה
+    // שה-Reminder נמחק מהDB מסיבה כלשהי. @Update היה מחזיר 0 בשקט בלי לזרוק
+    // exception, כך שה-@Transaction לא היה יכול להגן. REPLACE מבטיח שה-Reminder
+    // תמיד יקים/יתעדכן בתוך אותה טרנזקציה.
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    protected abstract void upsertReminder(Reminder reminder);
+
     @Transaction
     public void updateGoalWithReminder(Goal goal, Reminder reminder) {
         updateGoal(goal);
-        updateReminder(reminder);
+        upsertReminder(reminder);   // upsert ולא update – בטוח גם אם Reminder חסר
     }
 
-    // Category Queries
+    // שאילתות קטגוריות
     @Insert
     public abstract long insertCategory(Category category);
 
@@ -86,7 +93,7 @@ public abstract class Dao {
     @Query("SELECT name FROM categories WHERE id = :catId")
     public abstract String getCategoryNameById(long catId);
 
-    // Goal Status Queries
+    // שאילתות סטטוס מטרה
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertCompletion(GoalCompletion completion);
 
@@ -110,7 +117,7 @@ public abstract class Dao {
     @Query("SELECT * FROM goal_skips WHERE goalId = :goalId AND skipDate = :date")
     public abstract GoalSkip getSkip(int goalId, long date);
 
-    // Progress Tracking Query
+    // שאילתת מעקב התקדמות
     @Query("SELECT g.id as goalId, g.name as goalName, g.creationDate as creationDate, r.days as reminderDays, " +
            "(SELECT COUNT(*) FROM goal_completions WHERE goalId = g.id AND completionDate BETWEEN :startDate AND :endDate) as completionCount, " +
            "(SELECT COUNT(*) FROM goal_skips WHERE goalId = g.id AND skipDate BETWEEN :startDate AND :endDate) as skipCount " +

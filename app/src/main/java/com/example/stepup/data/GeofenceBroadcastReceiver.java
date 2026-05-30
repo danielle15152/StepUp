@@ -60,15 +60,15 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 
                 Reminder reminder = goalWithReminder.reminder;
 
-                // 1. Check if today is a scheduled day
+                // 1. בדיקה האם היום הוא יום פעיל של המטרה
                 Calendar today = Calendar.getInstance();
-                int dayOfWeek = today.get(Calendar.DAY_OF_WEEK) - 1; // 0=Sunday
+                int dayOfWeek = today.get(Calendar.DAY_OF_WEEK) - 1;
                 if (reminder.days == null || !reminder.days.contains(dayOfWeek)) {
                     Log.i(TAG, "Notification check failed: Not a scheduled day for goal ID " + goalId);
                     return;
                 }
 
-                // 2. Check if a notification was already sent today
+                // 2. בדיקה האם כבר נשלחה התראה היום
                 long lastNotificationTime = reminder.lastLocationNotificationTimestamp;
                 long now = System.currentTimeMillis();
                 if (TimeUnit.MILLISECONDS.toDays(now) == TimeUnit.MILLISECONDS.toDays(lastNotificationTime)) {
@@ -76,12 +76,10 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                     return;
                 }
 
-                // All checks passed! Send notification
-                // The NotificationScheduler will now use the Goal object's notificationType
-                // to determine the title and message.
-                NotificationScheduler.showImmediateNotification(context, goalWithReminder.goal); // Pass the Goal object
+                // כל הבדיקות עברו - שולחים התראה
+                NotificationScheduler.showImmediateNotification(context, goalWithReminder.goal);
 
-                // Update the timestamp in the database
+                // עדכון חותמת הזמן במסד הנתונים
                 reminder.lastLocationNotificationTimestamp = now;
                 dao.updateReminder(reminder);
                 Log.i(TAG, "Notification sent and timestamp updated for goal ID " + goalId);

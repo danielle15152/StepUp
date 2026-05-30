@@ -17,35 +17,16 @@ import java.util.List;
 public class Reminder {
 
     @PrimaryKey
-    public int id; // Will map to goal id
+    public int id; // מזהה זהה למזהה המטרה
 
-    /**
-     * List of days (0-6, Sunday=0) for time-based reminders.
-     */
     public List<Integer> days;
 
-    /**
-     * The time of day (as minutes since midnight) for time-based reminders.
-     * Can be null for location-based reminders.
-     */
     public Integer minuteOfDay;
 
-    /**
-     * The latitude for location-based reminders.
-     * Null if this is a time-based reminder.
-     */
     public Double latitude;
 
-    /**
-     * The longitude for location-based reminders.
-     * Null if this is a time-based reminder.
-     */
     public Double longitude;
 
-    /**
-     * The timestamp (in millis) of the last time a location-based notification was sent.
-     * Used to prevent sending multiple notifications on the same day.
-     */
     public long lastLocationNotificationTimestamp;
 
     /**
@@ -58,7 +39,5 @@ public class Reminder {
      */
     public String locationName;
 
-
-    // Room needs a constructor for initialization
     public Reminder() {}
 }

@@ -19,12 +19,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.StepUp">
 
-        <!-- ****************************************************************** -->
-        <!-- *** IMPORTANT: THIS IS YOUR GOOGLE MAPS API KEY - KEEP IT SECRET *** -->
-        <!-- ****************************************************************** -->
+        <!-- המפתח נקרא מ-local.properties דרך build.gradle.kts – לא מופיע בקוד -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDhgGGhW5Tw4L49rOPDUcODfffBcBBAEFk" />
+            android:value="${MAPS_API_KEY}" />
 
         <!-- Main entry point of the app -->
         <activity
